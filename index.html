@@ -1,0 +1,1532 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>薈苑菜單編輯器</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background: #1a1a1a;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ===== HEADER ===== */
+header {
+  background: #111;
+  border-bottom: 1px solid #333;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.header-title {
+  color: #c9a96e;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+
+.header-actions { display: flex; gap: 8px; }
+
+/* ===== MAIN LAYOUT ===== */
+.main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ===== LEFT PANEL ===== */
+.left {
+  width: 380px;
+  min-width: 320px;
+  background: #242424;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #333;
+  overflow: hidden;
+}
+
+.left-tabs {
+  display: flex;
+  background: #1a1a1a;
+  border-bottom: 1px solid #333;
+  flex-shrink: 0;
+}
+
+.left-tabs button {
+  flex: 1;
+  padding: 11px 6px;
+  border: none;
+  background: transparent;
+  color: #666;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+}
+
+.left-tabs button.active {
+  color: #c9a96e;
+  border-bottom-color: #c9a96e;
+}
+
+.tab-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: none;
+}
+
+.tab-content.active { display: flex; flex-direction: column; gap: 12px; }
+
+/* ===== FORM ===== */
+.field-label {
+  font-size: 10px;
+  color: #666;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+input[type="text"], input[type="number"], select, textarea {
+  width: 100%;
+  background: #1a1a1a;
+  border: 1px solid #3a3a3a;
+  color: #e0e0e0;
+  padding: 9px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border 0.2s;
+  font-family: inherit;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #c9a96e;
+}
+
+textarea { resize: none; min-height: 56px; }
+
+select option { background: #1a1a1a; }
+
+/* ===== BUTTONS ===== */
+.btn {
+  padding: 9px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-gold {
+  background: #c9a96e;
+  color: #111;
+}
+.btn-gold:hover { background: #b8944f; }
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid #444;
+  color: #aaa;
+}
+.btn-outline:hover { border-color: #c9a96e; color: #c9a96e; }
+
+.btn-danger {
+  background: transparent;
+  border: 1px solid #5a2a2a;
+  color: #e07070;
+}
+.btn-danger:hover { background: #3a1a1a; }
+
+.btn-sm { padding: 5px 10px; font-size: 11px; border-radius: 4px; }
+
+.btn-icon {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #3a3a3a;
+  border-radius: 4px;
+  background: #1a1a1a;
+  color: #888;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.btn-icon:hover { border-color: #c9a96e; color: #c9a96e; }
+
+/* ===== SECTION DIVIDER ===== */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  color: #555;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.section-divider::before, .section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #333;
+}
+
+/* ===== CURRENT MENU DISH LIST ===== */
+.dish-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 8px 10px;
+  transition: border-color 0.15s;
+}
+
+.dish-row:hover { border-color: #555; }
+
+.dish-row.dragging { opacity: 0.4; }
+.dish-row.drag-over { border-color: #c9a96e; background: rgba(201,169,110,0.08); }
+
+.dish-row-num {
+  font-size: 11px;
+  color: #555;
+  min-width: 18px;
+  text-align: center;
+}
+
+.dish-row-name {
+  flex: 1;
+  font-size: 15px;
+  color: #ddd;
+  background: transparent;
+  border: none;
+  padding: 0;
+  outline: none;
+  font-family: inherit;
+  min-width: 0;
+}
+
+.dish-row-name::placeholder { color: #444; }
+
+.dish-row-name:focus { color: #fff; }
+
+.dish-row-actions { display: flex; gap: 4px; align-items: center; }
+
+.dish-row-select {
+  width: 130px;
+  background: #1a1a1a;
+  border: 1px solid #3a3a3a;
+  color: #888;
+  padding: 4px 6px;
+  border-radius: 5px;
+  font-size: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.dish-row-select:focus { outline: none; border-color: #c9a96e; color: #c9a96e; }
+
+.drag-handle {
+  cursor: grab;
+  color: #444;
+  font-size: 14px;
+  padding: 0 2px;
+  user-select: none;
+}
+
+.drag-handle:active { cursor: grabbing; }
+
+/* ===== LIBRARY ===== */
+.cat-section { margin-bottom: 8px; }
+
+.cat-label {
+  font-size: 10px;
+  color: #666;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  padding: 4px 0;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.lib-dish {
+  display: flex;
+  align-items: center;
+  padding: 7px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.15s;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+
+.lib-dish:hover { background: #2a2a2a; }
+
+.lib-dish-name {
+  flex: 1;
+  font-size: 14px;
+  color: #ccc;
+}
+
+.lib-dish-add {
+  color: #555;
+  font-size: 18px;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.lib-dish:hover .lib-dish-add { color: #c9a96e; }
+
+.lib-dish-del {
+  color: #444;
+  font-size: 12px;
+  line-height: 1;
+  transition: color 0.15s;
+  padding: 2px 4px;
+}
+.lib-dish:hover .lib-dish-del { color: #e07070; }
+
+select.lib-dish-cat {
+  width: 54px;
+  background: #111;
+  border: 1px solid #2a2a2a;
+  color: #555;
+  padding: 2px 2px;
+  border-radius: 4px;
+  font-size: 10px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+select.lib-dish-cat:focus { outline: none; border-color: #c9a96e; color: #c9a96e; }
+
+input.lib-dish-price {
+  width: 62px;
+  background: #111;
+  border: 1px solid #2a2a2a;
+  color: #777;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  text-align: right;
+  flex-shrink: 0;
+}
+input.lib-dish-price:focus { outline: none; border-color: #c9a96e; color: #c9a96e; }
+input.lib-dish-price::-webkit-inner-spin-button,
+input.lib-dish-price::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input.lib-dish-price { -moz-appearance: textfield; }
+
+.suggested-price-row {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #1e1a12;
+  border: 1px solid #4a3820;
+  border-radius: 6px;
+  flex-wrap: wrap;
+}
+.suggested-label {
+  font-size: 11px;
+  color: #888;
+  white-space: nowrap;
+}
+.suggested-label strong { color: #c9a96e; }
+.suggested-arrow { color: #555; font-size: 12px; }
+
+/* ===== PRICE SECTION ===== */
+.price-bar {
+  padding: 12px 16px;
+  background: #1a1a1a;
+  border-top: 1px solid #333;
+  flex-shrink: 0;
+}
+
+.price-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.price-label {
+  font-size: 12px;
+  color: #888;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.price-input-wrap {
+  display: flex;
+  align-items: center;
+  background: #111;
+  border: 1px solid #3a3a3a;
+  border-radius: 6px;
+  overflow: hidden;
+  flex: 1;
+}
+
+.price-currency {
+  padding: 8px 10px;
+  color: #c9a96e;
+  font-size: 14px;
+  font-weight: 700;
+  background: #1e1e1e;
+  border-right: 1px solid #3a3a3a;
+  white-space: nowrap;
+}
+
+#price-input {
+  border: none;
+  background: transparent;
+  flex: 1;
+  padding: 8px 10px;
+  color: #e0e0e0;
+  font-size: 18px;
+  font-weight: 700;
+  min-width: 0;
+}
+
+#price-input:focus { outline: none; }
+
+.per-person {
+  font-size: 11px;
+  color: #666;
+  white-space: nowrap;
+}
+
+/* ===== MENU SELECTOR ===== */
+.menu-tabs-wrap {
+  padding: 12px 16px 0;
+  background: #1a1a1a;
+  flex-shrink: 0;
+}
+
+.menu-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+}
+
+.menu-tab-btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid #333;
+  background: transparent;
+  color: #888;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.menu-tab-btn.active {
+  background: #c9a96e;
+  border-color: #c9a96e;
+  color: #111;
+  font-weight: 700;
+}
+
+.menu-tab-btn:not(.active):hover { border-color: #c9a96e; color: #c9a96e; }
+
+/* ===== RIGHT PANEL ===== */
+.right {
+  flex: 1;
+  background: #111;
+  overflow-y: auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 32px;
+}
+
+/* ===== MENU PAPER ===== */
+.menu-paper {
+  background: white;
+  /* A5: 148mm × 210mm at 96dpi ≈ 559 × 794px */
+  width: 559px;
+  min-height: 794px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 72px 60px 72px;
+  position: relative;
+  font-family: 'Aptos', 'Calibri', 'Arial', sans-serif;
+}
+
+@media print {
+  .menu-paper {
+    width: 148mm;
+    min-height: 210mm;
+    box-shadow: none;
+    padding: 18mm 20mm;
+  }
+}
+
+/* Logo image */
+.menu-logo {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.menu-logo img {
+  height: 160px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Dish list */
+.menu-dishes {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 0;
+  flex: 1;
+}
+
+.menu-dish-name {
+  text-align: center;
+  color: #1a1a1a;
+  font-weight: normal;
+  font-family: 'Aptos', 'Calibri', 'Arial', sans-serif;
+  line-height: 1;
+  padding: 4px 0;
+  width: 100%;
+}
+
+/* Price block */
+.menu-price-block {
+  margin-top: 44px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.menu-price-num {
+  font-size: 12px;
+  color: #1a1a1a;
+  letter-spacing: 2px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 300;
+}
+
+.menu-price-per {
+  font-size: 12px;
+  color: #555;
+  letter-spacing: 3px;
+}
+
+.menu-empty-hint {
+  color: #bbb;
+  font-size: 13px;
+  font-family: sans-serif;
+  text-align: center;
+  margin: 40px 0;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #3a3a3a; border-radius: 3px; }
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #c9a96e;
+  color: #111;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: 999;
+}
+
+.toast.show { opacity: 1; }
+
+/* ===== INFO BOX ===== */
+.info-box {
+  background: #2a2218;
+  border: 1px solid #4a3820;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: #c9a96e;
+  line-height: 1.5;
+}
+
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+/* ===== VIEW TOGGLE (mobile only) ===== */
+.view-toggle-bar {
+  display: none;
+  background: #1a1a1a;
+  border-bottom: 1px solid #333;
+  flex-shrink: 0;
+}
+.view-toggle-bar button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  color: #666;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  letter-spacing: 0.5px;
+}
+.view-toggle-bar button.active {
+  color: #c9a96e;
+  border-bottom-color: #c9a96e;
+}
+
+/* ===== MENU PAPER WRAPPER (scaling) ===== */
+.menu-paper-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* ===== TABLET (768px – 1024px) ===== */
+@media (max-width: 1024px) and (min-width: 768px) {
+  .left {
+    width: 300px;
+    min-width: 260px;
+  }
+  .right {
+    padding: 20px 16px;
+  }
+  .dish-row-select {
+    width: 100px;
+  }
+}
+
+/* ===== MOBILE (<768px) ===== */
+@media (max-width: 767px) {
+  body {
+    height: auto;
+    min-height: 100vh;
+    overflow: auto;
+  }
+
+  .view-toggle-bar {
+    display: flex;
+  }
+
+  .main {
+    flex-direction: column;
+    overflow: visible;
+    flex: none;
+  }
+
+  .left {
+    width: 100%;
+    min-width: unset;
+    border-right: none;
+    border-bottom: 1px solid #333;
+    display: none;
+    overflow: visible;
+  }
+
+  .left.mobile-active { display: flex; }
+
+  .right {
+    display: none;
+    padding: 16px;
+    overflow: visible;
+    min-height: 500px;
+    justify-content: flex-start;
+  }
+
+  .right.mobile-active { display: flex; }
+
+  .header-title {
+    font-size: 13px;
+    letter-spacing: 1px;
+  }
+
+  .header-actions { gap: 4px; }
+
+  .btn-sm {
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+
+  .dish-row-select { width: 90px; }
+
+  .left-tabs button {
+    font-size: 11px;
+    padding: 10px 4px;
+  }
+
+  .tab-content { padding: 12px; }
+
+  .price-bar { padding: 10px 12px; }
+}
+
+/* ===== PRINT ===== */
+@page {
+  size: 148mm 210mm;
+  margin: 0;
+}
+
+@media print {
+  body { background: white; height: 210mm; overflow: hidden; }
+  .left, header, .view-toggle-bar { display: none; }
+  .main { height: 210mm; }
+  .right { padding: 0; background: white; align-items: stretch; justify-content: stretch; display: flex !important; }
+  .menu-paper-wrap { width: 100%; height: 100%; }
+  .menu-paper {
+    width: 148mm;
+    height: 210mm;
+    min-height: unset;
+    box-shadow: none;
+    padding: 18mm 20mm;
+    transform: none !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-title">薈苑菜單編輯器</div>
+  <div class="header-actions">
+    <button class="btn btn-outline btn-sm" onclick="printMenu()">列印 / 匯出</button>
+    <button class="btn btn-outline btn-sm" onclick="document.getElementById('import-library-input').click()">匯入菜式庫</button>
+    <input type="file" id="import-library-input" accept=".json" style="display:none" onchange="importLibrary(event)">
+
+    <button class="btn btn-outline btn-sm" onclick="newMenu()">＋ 新增套餐</button>
+    <button class="btn btn-danger btn-sm" onclick="resetMenusOnly()">重置套餐</button>
+  </div>
+</header>
+
+<div class="view-toggle-bar" id="view-toggle-bar">
+  <button class="active" data-view="edit" onclick="toggleView('edit')">✏️ 編輯</button>
+  <button data-view="preview" onclick="toggleView('preview')">👁 預覽</button>
+</div>
+
+<div class="main">
+
+  <!-- LEFT -->
+  <div class="left">
+
+    <!-- Menu selector -->
+    <div class="menu-tabs-wrap">
+      <div class="menu-tabs" id="menu-tabs"></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="left-tabs">
+      <button class="active" onclick="switchTab('edit', this)">編輯菜式</button>
+      <button onclick="switchTab('library', this)">菜式庫</button>
+      <button onclick="switchTab('settings', this)">菜單設定</button>
+    </div>
+
+    <!-- TAB: 編輯菜式 -->
+    <div class="tab-content active" id="tab-edit">
+      <div class="info-box">拖曳 ⠿ 調整順序，點擊菜式名稱可直接編輯，或從「菜式庫」加入常用菜式。</div>
+      <div id="edit-dish-list"></div>
+      <button class="btn btn-outline" style="width:100%" onclick="addBlankDish()">＋ 新增一行</button>
+    </div>
+
+    <!-- TAB: 菜式庫 -->
+    <div class="tab-content" id="tab-library">
+      <div class="info-box">點擊菜式右側「＋」即可加入目前套餐末端。</div>
+      <div id="library-list"></div>
+
+    </div>
+
+    <!-- TAB: 菜單設定 -->
+    <div class="tab-content" id="tab-settings">
+      <div>
+        <div class="field-label">套餐名稱（用於分頁標籤）</div>
+        <input type="text" id="menu-label" placeholder="例：8,980 套餐" oninput="updateMenuLabel()">
+      </div>
+      <div class="section-divider">菜單抬頭</div>
+      <div class="info-box">Logo 使用圖片檔案：<br>Desktop/Picture1.jpg</div>
+      <div class="section-divider">資料管理</div>
+      <button class="btn btn-danger" style="width:100%" onclick="resetToDefaults()">重設所有資料為預設值</button>
+      <div class="section-divider">字體大小</div>
+      <div class="row2">
+        <div>
+          <div class="field-label">菜式字體 (pt → px)</div>
+          <input type="number" id="font-size" value="20" min="12" max="60" oninput="renderPreview()">
+        </div>
+        <div>
+          <div class="field-label">行距 (px)</div>
+          <input type="number" id="line-height" value="14" min="0" max="60" oninput="renderPreview()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Price bar -->
+    <div class="price-bar">
+      <div class="price-row">
+        <div class="price-label">每位收費</div>
+        <div class="price-input-wrap">
+          <div class="price-currency">TWD</div>
+          <input type="text" id="price-input" placeholder="0" oninput="renderPreview()">
+        </div>
+        <div class="per-person">每位</div>
+      </div>
+      <div class="suggested-price-row" id="suggested-price-row" style="display:none">
+        <span class="suggested-label">參考價格 <span id="ref-cost-val">-</span></span>
+        <span class="suggested-arrow">→</span>
+        <span class="suggested-label">建議售價 <strong id="suggested-price-val">-</strong></span>
+        <button class="btn btn-gold btn-sm" onclick="applySuggestedPrice()">套用</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+    <div class="menu-paper-wrap" id="menu-paper-wrap">
+      <div class="menu-paper" id="menu-paper">
+        <!-- rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ======= DATA =======
+let LIBRARY = {
+  "冷盤": [],
+  "湯羹": [],
+  "乾貨": [],
+  "海鮮": [],
+  "魚": [],
+  "禽類": [],
+  "肉類": [],
+  "蔬菜": [],
+  "飯麵": [],
+  "甜品": [],
+};
+
+let menus = [
+  {
+    id: 1,
+    label: '4,280 套餐',
+    logoMain: '貳零捌拾公館',
+    logoSub: '薈苑',
+    fontSize: 20,
+    lineHeight: 14,
+    price: 4280,
+    dishes: [
+      '薈苑五彩碟',
+      '二十四節氣原煲老火湯',
+      '雙龍戲珠港式龍蝦',
+      '玉環花膠瑤柱脯',
+      '古法盤龍蒸海斑',
+      '時蔬炒溫體牛',
+      '芝麻鹽焗雞',
+      '港式煎釀三寶',
+      '老菜蔡炒飯',
+      '陳皮蓮子百合紅豆沙',
+    ],
+  },
+  {
+    id: 2,
+    label: '6,880 套餐',
+    logoMain: '貳零捌拾公館',
+    logoSub: '薈苑',
+    fontSize: 20,
+    lineHeight: 14,
+    price: 6880,
+    dishes: [
+      '薈苑五彩碟',
+      '松茸竹笙烏雞燉花膠',
+      '雙龍戲珠港式龍蝦',
+      '蔥燒大海參',
+      '蝦籽麒麟斑',
+      '八寶富貴雞',
+      '琥珀炒雪花和牛',
+      '法海大蒲團',
+      '老菜蔡炒飯',
+      '椰汁芋頭西米露',
+    ],
+  },
+  {
+    id: 3,
+    label: '8,980 套餐',
+    logoMain: '貳零捌拾公館',
+    logoSub: '薈苑',
+    fontSize: 20,
+    lineHeight: 14,
+    price: 8980,
+    dishes: [
+      '薈苑五彩碟',
+      '潮式紅燒大鮑翅',
+      '雙龍戲珠港式龍蝦',
+      '鮑魚玉環瑤柱脯 20頭',
+      '江南百花雞',
+      '魚奶湯堂灼大海斑',
+      '膏蟹蒸肉餅',
+      '芥蘭炒溫體牛',
+      '老菜蔡炒飯',
+      '蛋白杏仁茶',
+    ],
+  },
+];
+
+let currentMenuId = 1;
+let nextId = 10;
+let dragSrcIndex = null;
+
+function addTouchDrag(row, idx) {
+  const handle = row.querySelector('.drag-handle');
+  if (!handle) return;
+  handle.addEventListener('touchstart', e => {
+    e.preventDefault();
+    dragSrcIndex = idx;
+    row.classList.add('dragging');
+  }, { passive: false });
+  handle.addEventListener('touchmove', e => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    const targetRow = el && el.closest('.dish-row');
+    document.querySelectorAll('.dish-row').forEach(r => r.classList.remove('drag-over'));
+    if (targetRow && targetRow !== row) targetRow.classList.add('drag-over');
+  }, { passive: false });
+  handle.addEventListener('touchend', e => {
+    e.preventDefault();
+    row.classList.remove('dragging');
+    document.querySelectorAll('.dish-row').forEach(r => r.classList.remove('drag-over'));
+    const touch = e.changedTouches[0];
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    const targetRow = el && el.closest('.dish-row');
+    if (!targetRow || dragSrcIndex === null) { dragSrcIndex = null; return; }
+    const targetIdx = parseInt(targetRow.dataset.idx);
+    if (isNaN(targetIdx) || targetIdx === dragSrcIndex) { dragSrcIndex = null; return; }
+    const dishes = currentMenu().dishes;
+    const [moved] = dishes.splice(dragSrcIndex, 1);
+    dishes.splice(targetIdx, 0, moved);
+    dragSrcIndex = null;
+    renderDishList();
+    renderPreview();
+    saveToStorage();
+  }, { passive: false });
+}
+
+// ======= STORAGE =======
+const DEFAULT_LIBRARY = JSON.parse(JSON.stringify(LIBRARY));
+const DEFAULT_MENUS = JSON.parse(JSON.stringify(menus));
+
+function saveToStorage() {
+  try {
+    localStorage.setItem('huiyuan_library', JSON.stringify(LIBRARY));
+    localStorage.setItem('huiyuan_menus', JSON.stringify(menus));
+  } catch(e) {}
+}
+
+function applyLibraryData(raw) {
+  const ordered = {};
+  Object.keys(DEFAULT_LIBRARY).forEach(cat => {
+    ordered[cat] = raw[cat] ?? JSON.parse(JSON.stringify(DEFAULT_LIBRARY[cat]));
+  });
+  LIBRARY = ordered;
+}
+
+function loadFromStorage() {
+  try {
+    const lib = localStorage.getItem('huiyuan_library');
+    if (lib) applyLibraryData(JSON.parse(lib));
+  } catch(e) {}
+  try {
+    const saved = localStorage.getItem('huiyuan_menus');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length) {
+        menus = parsed;
+        currentMenuId = menus[0].id;
+        nextId = Math.max(...menus.map(m => m.id)) + 1;
+      }
+    }
+  } catch(e) {}
+}
+
+function resetMenusOnly() {
+  if (!confirm('確定將三款套餐還原為預設值？菜式庫不受影響。')) return;
+  menus = JSON.parse(JSON.stringify(DEFAULT_MENUS));
+  currentMenuId = menus[0].id;
+  nextId = 10;
+  renderMenuTabs();
+  loadMenuIntoForm();
+  renderDishList();
+  renderPreview();
+  updateSuggestedPrice();
+  showToast('已還原三款預設套餐');
+}
+
+function resetToDefaults() {
+  if (!confirm('確定重設所有資料為預設值？菜式庫與所有套餐都會還原。')) return;
+  localStorage.removeItem('huiyuan_library');
+  localStorage.removeItem('huiyuan_menus');
+  LIBRARY = JSON.parse(JSON.stringify(DEFAULT_LIBRARY));
+  menus = JSON.parse(JSON.stringify(DEFAULT_MENUS));
+  currentMenuId = 1;
+  nextId = 10;
+  renderMenuTabs();
+  loadMenuIntoForm();
+  renderLibrary();
+  renderDishList();
+  renderPreview();
+  updateSuggestedPrice();
+  showToast('已重設為預設資料');
+}
+
+function exportLibrary() {
+  const blob = new Blob([JSON.stringify(LIBRARY, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '薈苑菜式庫.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('菜式庫已匯出');
+}
+
+function importLibrary(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      applyLibraryData(data);
+      saveToStorage();
+      renderLibrary();
+      showToast('菜式庫已匯入');
+    } catch(err) {
+      alert('檔案格式錯誤，請使用由本工具匯出的 .json 檔');
+    }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function currentMenu() {
+  return menus.find(m => m.id === currentMenuId);
+}
+
+// ======= RESPONSIVE =======
+function toggleView(view) {
+  document.querySelectorAll('.view-toggle-bar button').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === view);
+  });
+  const left = document.querySelector('.left');
+  const right = document.querySelector('.right');
+  if (view === 'edit') {
+    left.classList.add('mobile-active');
+    right.classList.remove('mobile-active');
+  } else {
+    left.classList.remove('mobile-active');
+    right.classList.add('mobile-active');
+    setTimeout(updatePaperScale, 50);
+  }
+}
+
+function updatePaperScale() {
+  const rightEl = document.querySelector('.right');
+  const paper = document.getElementById('menu-paper');
+  const wrap = document.getElementById('menu-paper-wrap');
+  if (!rightEl || !paper || !wrap) return;
+
+  const padding = window.innerWidth <= 767 ? 32 : 40;
+  const availW = rightEl.clientWidth - padding;
+  const scale = Math.min(1, availW / 559);
+
+  if (scale < 1) {
+    paper.style.transform = `scale(${scale})`;
+    paper.style.transformOrigin = 'top center';
+    wrap.style.height = (paper.scrollHeight * scale) + 'px';
+    wrap.style.width = (559 * scale) + 'px';
+  } else {
+    paper.style.transform = '';
+    paper.style.transformOrigin = '';
+    wrap.style.height = '';
+    wrap.style.width = '';
+  }
+}
+
+function initMobileLayout() {
+  const isMobile = window.innerWidth < 768;
+  const left = document.querySelector('.left');
+  const right = document.querySelector('.right');
+  if (isMobile) {
+    if (!left.classList.contains('mobile-active') && !right.classList.contains('mobile-active')) {
+      left.classList.add('mobile-active');
+    }
+  } else {
+    left.classList.remove('mobile-active');
+    right.classList.remove('mobile-active');
+  }
+  updatePaperScale();
+}
+
+window.addEventListener('resize', initMobileLayout);
+
+// ======= INIT =======
+window.onload = () => {
+  loadFromStorage();
+  renderMenuTabs();
+  loadMenuIntoForm();
+  renderLibrary();
+  renderDishList();
+  renderPreview();
+  updateSuggestedPrice();
+  initMobileLayout();
+};
+
+// ======= MENU TABS =======
+function renderMenuTabs() {
+  const wrap = document.getElementById('menu-tabs');
+  wrap.innerHTML = '';
+  menus.forEach(m => {
+    const btn = document.createElement('button');
+    btn.className = 'menu-tab-btn' + (m.id === currentMenuId ? ' active' : '');
+    btn.textContent = m.label;
+    btn.onclick = () => selectMenu(m.id);
+    wrap.appendChild(btn);
+  });
+}
+
+function selectMenu(id) {
+  currentMenuId = id;
+  renderMenuTabs();
+  loadMenuIntoForm();
+  renderDishList();
+  renderPreview();
+  updateSuggestedPrice();
+}
+
+// ======= FORM LOAD =======
+function loadMenuIntoForm() {
+  const m = currentMenu();
+  document.getElementById('menu-label').value = m.label;
+  document.getElementById('font-size').value = m.fontSize || 20;
+  document.getElementById('line-height').value = m.lineHeight || 14;
+  document.getElementById('price-input').value = m.price || '';
+}
+
+// ======= TABS =======
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.left-tabs button').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ======= DISH LIST =======
+function renderDishList() {
+  dishRowViewCat = {};
+  const m = currentMenu();
+  const container = document.getElementById('edit-dish-list');
+  container.innerHTML = '';
+
+  m.dishes.forEach((name, idx) => {
+    const row = document.createElement('div');
+    row.className = 'dish-row';
+    row.draggable = true;
+    row.dataset.idx = idx;
+
+    row.ondragstart = e => {
+      dragSrcIndex = idx;
+      setTimeout(() => row.classList.add('dragging'), 0);
+    };
+    row.ondragend = () => row.classList.remove('dragging');
+    row.ondragover = e => { e.preventDefault(); };
+    row.ondrop = e => {
+      e.preventDefault();
+      if (dragSrcIndex === null || dragSrcIndex === idx) return;
+      const dishes = currentMenu().dishes;
+      const [moved] = dishes.splice(dragSrcIndex, 1);
+      dishes.splice(idx, 0, moved);
+      dragSrcIndex = null;
+      renderDishList();
+      renderPreview();
+      saveToStorage();
+    };
+
+    row.innerHTML = `
+      <span class="drag-handle" title="拖曳排序">⠿</span>
+      <span class="dish-row-num">${idx + 1}</span>
+      <input class="dish-row-name" type="text" value="${escHtml(name)}"
+        oninput="updateDishName(${idx}, this.value)"
+        placeholder="菜式名稱">
+      <div class="dish-row-actions">
+        ${buildDishSelect(name, idx)}
+        <button class="btn-icon" title="刪除" onclick="removeDish(${idx})" style="color:#e07070;border-color:#5a2a2a">✕</button>
+      </div>`;
+    addTouchDrag(row, idx);
+    container.appendChild(row);
+  });
+}
+
+let dishRowViewCat = {};
+
+function buildDishSelect(currentName, idx) {
+  let defaultCat = null;
+  for (const [cat, dishes] of Object.entries(LIBRARY)) {
+    if (dishes.find(d => d.name === currentName)) { defaultCat = cat; break; }
+  }
+  const viewCat = dishRowViewCat[idx] || defaultCat;
+
+  let options = `<option value="">— 換菜式 —</option>`;
+  if (viewCat && LIBRARY[viewCat]) {
+    options += `<optgroup label="${viewCat}">`;
+    options += LIBRARY[viewCat].map(d =>
+      `<option value="${escHtml(d.name)}"${d.name === currentName ? ' selected' : ''}>${escHtml(d.name)}</option>`
+    ).join('');
+    options += `</optgroup>`;
+  } else if (!viewCat) {
+    for (const [cat, dishes] of Object.entries(LIBRARY)) {
+      if (!dishes.length) continue;
+      options += `<optgroup label="${cat}">`;
+      options += dishes.map(d => `<option value="${escHtml(d.name)}">${escHtml(d.name)}</option>`).join('');
+      options += `</optgroup>`;
+    }
+  }
+
+  const otherCats = Object.keys(LIBRARY).filter(c => c !== viewCat && LIBRARY[c].length > 0);
+  if (otherCats.length) {
+    options += `<optgroup label="— 切換類別 —">`;
+    options += otherCats.map(c => `<option value=">>cat:${c}">▸ ${c}</option>`).join('');
+    options += `</optgroup>`;
+  }
+
+  return `<select class="dish-row-select" onchange="selectDishFromLib(${idx}, this.value)">${options}</select>`;
+}
+
+function selectDishFromLib(idx, val) {
+  if (!val) return;
+  if (val.startsWith('>>cat:')) {
+    dishRowViewCat[idx] = val.slice(6);
+    const rows = document.querySelectorAll('.dish-row');
+    if (rows[idx]) {
+      const sel = rows[idx].querySelector('.dish-row-select');
+      if (sel) sel.outerHTML = buildDishSelect(currentMenu().dishes[idx], idx);
+    }
+    return;
+  }
+  delete dishRowViewCat[idx];
+  currentMenu().dishes[idx] = val;
+  renderDishList();
+  renderPreview();
+  updateSuggestedPrice();
+  saveToStorage();
+}
+
+function updateDishName(idx, val) {
+  currentMenu().dishes[idx] = val;
+  renderPreview();
+  updateSuggestedPrice();
+  saveToStorage();
+}
+
+function moveDish(idx, dir) {
+  const dishes = currentMenu().dishes;
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= dishes.length) return;
+  [dishes[idx], dishes[newIdx]] = [dishes[newIdx], dishes[idx]];
+  renderDishList();
+  renderPreview();
+  saveToStorage();
+}
+
+function removeDish(idx) {
+  currentMenu().dishes.splice(idx, 1);
+  renderDishList();
+  renderPreview();
+  updateSuggestedPrice();
+  saveToStorage();
+}
+
+function addBlankDish() {
+  currentMenu().dishes.push('');
+  renderDishList();
+  renderPreview();
+  saveToStorage();
+  // focus the new input
+  setTimeout(() => {
+    const inputs = document.querySelectorAll('.dish-row-name');
+    if (inputs.length) inputs[inputs.length - 1].focus();
+  }, 50);
+}
+
+// ======= LIBRARY =======
+function renderLibrary() {
+  const container = document.getElementById('library-list');
+  container.innerHTML = '';
+  Object.entries(LIBRARY).forEach(([cat, dishes]) => {
+    const sec = document.createElement('div');
+    sec.className = 'cat-section';
+    sec.innerHTML = `<div class="cat-label">${cat}</div>`;
+    dishes.forEach(d => {
+      const item = document.createElement('div');
+      item.className = 'lib-dish';
+      item.innerHTML = `
+        <span class="lib-dish-name">${d.name}</span>
+        <span class="lib-dish-add">＋</span>`;
+      item.querySelector('.lib-dish-add').onclick = (e) => {
+        e.stopPropagation();
+        currentMenu().dishes.push(d.name);
+        renderDishList();
+        renderPreview();
+        updateSuggestedPrice();
+        showToast(`已加入：${d.name}`);
+      };
+      sec.appendChild(item);
+    });
+    container.appendChild(sec);
+  });
+}
+
+function addToLibrary() {
+  const name = document.getElementById('new-lib-name').value.trim();
+  const cat = document.getElementById('new-lib-cat').value;
+  const price = parseInt(document.getElementById('new-lib-price').value) || 0;
+  if (!name) return;
+  if (!LIBRARY[cat]) LIBRARY[cat] = [];
+  if (!LIBRARY[cat].find(d => d.name === name)) LIBRARY[cat].push({name, price});
+  document.getElementById('new-lib-name').value = '';
+  document.getElementById('new-lib-price').value = '';
+  renderLibrary();
+  saveToStorage();
+  showToast(`已加入菜式庫：${name}`);
+}
+
+function getLibDishPrice(name) {
+  for (const dishes of Object.values(LIBRARY)) {
+    const found = dishes.find(d => d.name === name);
+    if (found) return found.price || 0;
+  }
+  return 0;
+}
+
+function roundUpTo80(val) {
+  const n = Math.ceil((val - 80) / 100);
+  return n * 100 + 80;
+}
+
+function updateSuggestedPrice() {
+  const m = currentMenu();
+  const total = m.dishes.filter(d => d.trim()).reduce((sum, d) => sum + getLibDishPrice(d), 0);
+  const suggested = total > 0 ? roundUpTo80(total) : null;
+  const row = document.getElementById('suggested-price-row');
+  const val = document.getElementById('suggested-price-val');
+  const cost = document.getElementById('ref-cost-val');
+  if (total > 0) {
+    cost.textContent = `TWD ${total.toLocaleString()}`;
+    val.textContent = `TWD ${suggested.toLocaleString()}`;
+    row.style.display = 'flex';
+  } else {
+    row.style.display = 'none';
+  }
+}
+
+function applySuggestedPrice() {
+  const val = document.getElementById('suggested-price-val').textContent.replace(/[^0-9]/g, '');
+  if (!val) return;
+  document.getElementById('price-input').value = val;
+  currentMenu().price = parseInt(val);
+  renderPreview();
+  showToast('已套用建議售價');
+}
+
+// ======= MENU MANAGEMENT =======
+function newMenu() {
+  const label = prompt('新套餐名稱（例：10,800 套餐）', '新套餐');
+  if (!label) return;
+  const m = {
+    id: nextId++,
+    label,
+    logoMain: '貳零捌拾公館',
+    logoSub: '薈苑',
+    fontSize: 20,
+    lineHeight: 14,
+    price: null,
+    dishes: ['薈苑五彩碟'],
+  };
+  menus.push(m);
+  currentMenuId = m.id;
+  renderMenuTabs();
+  loadMenuIntoForm();
+  renderDishList();
+  renderPreview();
+  saveToStorage();
+}
+
+function deleteCurrentMenu() {
+  if (menus.length <= 1) { showToast('至少保留一個套餐'); return; }
+  if (!confirm(`確定刪除「${currentMenu().label}」套餐？`)) return;
+  menus = menus.filter(m => m.id !== currentMenuId);
+  currentMenuId = menus[0].id;
+  renderMenuTabs();
+  loadMenuIntoForm();
+  renderDishList();
+  renderPreview();
+  saveToStorage();
+}
+
+function updateMenuLabel() {
+  currentMenu().label = document.getElementById('menu-label').value;
+  renderMenuTabs();
+  saveToStorage();
+}
+
+// ======= PREVIEW =======
+function renderPreview() {
+  const m = currentMenu();
+  // read live form values
+  m.fontSize  = parseInt(document.getElementById('font-size').value)  || 20;
+  m.lineHeight= parseInt(document.getElementById('line-height').value) || 14;
+  m.price     = document.getElementById('price-input').value || '';
+
+  const paper = document.getElementById('menu-paper');
+  paper.innerHTML = '';
+
+  // Logo
+  const logo = document.createElement('div');
+  logo.className = 'menu-logo';
+  logo.innerHTML = `<img src="Picture1.jpg" alt="薈苑 logo">`;
+  paper.appendChild(logo);
+
+  // Dish list
+  const dishWrap = document.createElement('div');
+  dishWrap.className = 'menu-dishes';
+
+  const filledDishes = m.dishes.filter(d => d.trim());
+  if (filledDishes.length === 0) {
+    dishWrap.innerHTML = '<div class="menu-empty-hint">← 左側新增菜式</div>';
+  } else {
+    filledDishes.forEach(name => {
+      const div = document.createElement('div');
+      div.className = 'menu-dish-name';
+      div.style.fontSize = m.fontSize + 'px';
+      div.style.paddingTop = (m.lineHeight * 0.5) + 'px';
+      div.style.paddingBottom = (m.lineHeight * 0.5) + 'px';
+      div.textContent = name;
+      dishWrap.appendChild(div);
+    });
+  }
+  paper.appendChild(dishWrap);
+
+  // Price
+  if (m.price) {
+    const priceBlock = document.createElement('div');
+    priceBlock.className = 'menu-price-block';
+    priceBlock.innerHTML = `
+      <div class="menu-price-num">${m.price}</div>
+      <div class="menu-price-per">每位</div>`;
+    paper.appendChild(priceBlock);
+  }
+  saveToStorage();
+  setTimeout(updatePaperScale, 0);
+}
+
+// ======= IMPORT MENUS =======
+function triggerImportMenus() {
+  document.getElementById('import-menus-input').click();
+}
+
+function importMenus(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      let data = JSON.parse(ev.target.result);
+      if (!Array.isArray(data)) data = [data];
+      if (!data.length || !data[0].dishes) throw new Error('格式錯誤');
+      const incoming = data.map((m, i) => ({
+        id: nextId++,
+        label: m.label || `匯入套餐 ${i + 1}`,
+        logoMain: m.logoMain || '貳零捌拾公館',
+        logoSub: m.logoSub || '薈苑',
+        fontSize: m.fontSize || 20,
+        lineHeight: m.lineHeight || 14,
+        price: m.price || null,
+        dishes: Array.isArray(m.dishes) ? m.dishes : [],
+      }));
+      if (!confirm(`將匯入 ${incoming.length} 個套餐並取代目前所有套餐，確定繼續？`)) return;
+      menus = incoming;
+      currentMenuId = menus[0].id;
+      renderMenuTabs();
+      loadMenuIntoForm();
+      renderDishList();
+      renderPreview();
+      updateSuggestedPrice();
+      showToast(`已匯入 ${incoming.length} 個套餐`);
+    } catch (err) {
+      alert('檔案格式錯誤，請使用由本工具匯出的菜單 .json 檔');
+    }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+// ======= PRINT =======
+function printMenu() {
+  const orig = document.title;
+  document.title = currentMenu().label;
+  window.print();
+  document.title = orig;
+}
+
+// ======= UTILS =======
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+</script>
+</body>
+</html>
