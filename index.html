@@ -245,6 +245,65 @@ select option { background: #1a1a1a; }
 }
 .dish-row-select:focus { outline: none; border-color: #c9a96e; color: #c9a96e; }
 
+/* ===== CUSTOM DISH DROPDOWN ===== */
+.dish-dd {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.dish-dd-btn {
+  width: 80px;
+  background: #1a1a1a;
+  border: 1px solid #3a3a3a;
+  color: #888;
+  padding: 4px 6px;
+  border-radius: 5px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  text-align: left;
+}
+.dish-dd-btn:hover, .dish-dd-btn.open { border-color: #c9a96e; color: #c9a96e; }
+.dish-dd-panel {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 3px);
+  background: #242424;
+  border: 1px solid #444;
+  border-radius: 6px;
+  min-width: 160px;
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 999;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+}
+.dish-dd-panel.open { display: block; }
+.dish-dd-item {
+  padding: 7px 14px;
+  font-size: 13px;
+  color: #ccc;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.dish-dd-item:hover { background: #333; color: #fff; }
+.dish-dd-item.dd-selected { color: #c9a96e; }
+.dish-dd-item.dd-selected::before { content: '✓  '; }
+.dish-dd-item.dd-cat { color: #aaa; }
+.dish-dd-item.dd-cat::after { content: ' ▸'; }
+.dish-dd-item.dd-back { color: #777; font-size: 11px; }
+.dish-dd-sep {
+  padding: 3px 14px;
+  font-size: 10px;
+  color: #555;
+  background: #1a1a1a;
+  border-bottom: 1px solid #333;
+  border-top: 1px solid #333;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 .drag-handle {
   cursor: grab;
   color: #444;
@@ -859,7 +918,7 @@ let menus = [
       '芝麻鹽焗雞',
       '港式煎釀三寶',
       '老菜蔡炒飯',
-      '陳皮蓮子百合紅豆沙',
+      '蛋花綠豆馬蹄爽',
     ],
   },
   {
@@ -880,7 +939,7 @@ let menus = [
       '琥珀炒雪花和牛',
       '法海大蒲團',
       '老菜蔡炒飯',
-      '椰汁芋頭西米露',
+      '蜜瓜西米露',
     ],
   },
   {
@@ -1208,46 +1267,71 @@ function buildDishSelect(currentName, idx) {
     if (dishes.find(d => d.name === currentName)) { defaultCat = cat; break; }
   }
   const viewCat = dishRowViewCat[idx] || defaultCat;
-
-  let options = `<option value="">— 換菜式 —</option>`;
-  if (viewCat && LIBRARY[viewCat]) {
-    options += `<optgroup label="${viewCat}">`;
-    options += LIBRARY[viewCat].map(d =>
-      `<option value="${escHtml(d.name)}"${d.name === currentName ? ' selected' : ''}>${escHtml(d.name)}</option>`
-    ).join('');
-    options += `</optgroup>`;
-  } else if (!viewCat) {
-    for (const [cat, dishes] of Object.entries(LIBRARY)) {
-      if (!dishes.length) continue;
-      options += `<optgroup label="${cat}">`;
-      options += dishes.map(d => `<option value="${escHtml(d.name)}">${escHtml(d.name)}</option>`).join('');
-      options += `</optgroup>`;
-    }
-  }
-
-  const otherCats = Object.keys(LIBRARY).filter(c => c !== viewCat && LIBRARY[c].length > 0);
-  if (otherCats.length) {
-    options += `<optgroup label="— 切換類別 —">`;
-    options += otherCats.map(c => `<option value=">>cat:${c}">▸ ${c}</option>`).join('');
-    options += `</optgroup>`;
-  }
-
-  return `<select class="dish-row-select" onchange="selectDishFromLib(${idx}, this.value)">${options}</select>`;
+  return `<div class="dish-dd" id="dish-dd-${idx}">`
+       + `<button class="dish-dd-btn" onclick="toggleDishDD(event,${idx})">換菜式 ▾</button>`
+       + `<div class="dish-dd-panel">${buildDishDDPanel(idx, viewCat, currentName)}</div>`
+       + `</div>`;
 }
 
-function selectDishFromLib(idx, val) {
-  if (!val) return;
-  if (val.startsWith('>>cat:')) {
-    dishRowViewCat[idx] = val.slice(6);
-    const rows = document.querySelectorAll('.dish-row');
-    if (rows[idx]) {
-      const sel = rows[idx].querySelector('.dish-row-select');
-      if (sel) sel.outerHTML = buildDishSelect(currentMenu().dishes[idx], idx);
+function buildDishDDPanel(idx, viewCat, currentName) {
+  let html = '';
+  if (viewCat && LIBRARY[viewCat]) {
+    html += `<div class="dish-dd-item dd-back" onclick="switchDishCat(event,${idx},null)">← 所有類別</div>`;
+    html += `<div class="dish-dd-sep">${escHtml(viewCat)}</div>`;
+    LIBRARY[viewCat].forEach(d => {
+      const sel = d.name === currentName ? ' dd-selected' : '';
+      html += `<div class="dish-dd-item${sel}" data-name="${escHtml(d.name)}" onclick="pickDishFromDD(${idx},this.dataset.name)">${escHtml(d.name)}</div>`;
+    });
+    const otherCats = Object.keys(LIBRARY).filter(c => c !== viewCat && LIBRARY[c].length > 0);
+    if (otherCats.length) {
+      html += `<div class="dish-dd-sep">切換類別</div>`;
+      otherCats.forEach(c => {
+        html += `<div class="dish-dd-item dd-cat" data-cat="${escHtml(c)}" onclick="switchDishCat(event,${idx},this.dataset.cat)">${escHtml(c)}</div>`;
+      });
     }
-    return;
+  } else {
+    html += `<div class="dish-dd-sep">選擇類別</div>`;
+    Object.entries(LIBRARY).forEach(([cat, dishes]) => {
+      if (!dishes.length) return;
+      html += `<div class="dish-dd-item dd-cat" data-cat="${escHtml(cat)}" onclick="switchDishCat(event,${idx},this.dataset.cat)">${escHtml(cat)}</div>`;
+    });
   }
+  return html;
+}
+
+function toggleDishDD(e, idx) {
+  e.stopPropagation();
+  const dd = document.getElementById(`dish-dd-${idx}`);
+  if (!dd) return;
+  const panel = dd.querySelector('.dish-dd-panel');
+  const btn = dd.querySelector('.dish-dd-btn');
+  const isOpen = panel.classList.contains('open');
+  document.querySelectorAll('.dish-dd-panel.open').forEach(p => p.classList.remove('open'));
+  document.querySelectorAll('.dish-dd-btn.open').forEach(b => b.classList.remove('open'));
+  if (!isOpen) { panel.classList.add('open'); btn.classList.add('open'); }
+}
+
+function switchDishCat(e, idx, cat) {
+  e.stopPropagation();
+  if (cat === null) { delete dishRowViewCat[idx]; }
+  else { dishRowViewCat[idx] = cat; }
+  const dd = document.getElementById(`dish-dd-${idx}`);
+  if (!dd) return;
+  const currentName = currentMenu().dishes[idx];
+  const viewCat = dishRowViewCat[idx] || (() => {
+    for (const [c, dishes] of Object.entries(LIBRARY)) {
+      if (dishes.find(d => d.name === currentName)) return c;
+    }
+    return null;
+  })();
+  dd.querySelector('.dish-dd-panel').innerHTML = buildDishDDPanel(idx, viewCat, currentName);
+}
+
+function pickDishFromDD(idx, name) {
+  currentMenu().dishes[idx] = name;
   delete dishRowViewCat[idx];
-  currentMenu().dishes[idx] = val;
+  document.querySelectorAll('.dish-dd-panel.open').forEach(p => p.classList.remove('open'));
+  document.querySelectorAll('.dish-dd-btn.open').forEach(b => b.classList.remove('open'));
   renderDishList();
   renderPreview();
   updateSuggestedPrice();
@@ -1527,6 +1611,11 @@ function showToast(msg) {
   clearTimeout(t._timer);
   t._timer = setTimeout(() => t.classList.remove('show'), 2000);
 }
+
+document.addEventListener('click', () => {
+  document.querySelectorAll('.dish-dd-panel.open').forEach(p => p.classList.remove('open'));
+  document.querySelectorAll('.dish-dd-btn.open').forEach(b => b.classList.remove('open'));
+});
 </script>
 </body>
 </html>
