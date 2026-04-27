@@ -46,7 +46,7 @@ header {
 /* ===== LEFT PANEL ===== */
 .left {
   width: 380px;
-  min-width: 320px;
+  min-width: 300px;
   background: #242424;
   display: flex;
   flex-direction: column;
@@ -229,6 +229,26 @@ select option { background: #1a1a1a; }
 .dish-row-name::placeholder { color: #444; }
 
 .dish-row-name:focus { color: #fff; }
+
+.dish-row-price {
+  flex: 0 0 64px;
+  width: 64px;
+  max-width: 64px;
+  font-size: 12px;
+  color: #aaa;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #3a3a3a;
+  padding: 2px 4px;
+  outline: none;
+  font-family: inherit;
+  text-align: right;
+  -moz-appearance: textfield;
+}
+.dish-row-price::-webkit-inner-spin-button,
+.dish-row-price::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.dish-row-price:focus { color: #c9a96e; border-bottom-color: #c9a96e; }
+.dish-row-price::placeholder { color: #333; }
 
 .dish-row-actions { display: flex; gap: 4px; align-items: center; }
 
@@ -909,16 +929,16 @@ let menus = [
     lineHeight: 14,
     price: 4280,
     dishes: [
-      '薈苑五彩碟',
-      '二十四節氣原煲老火湯',
-      '雙龍戲珠港式龍蝦',
-      '玉環花膠瑤柱脯',
-      '古法盤龍蒸海斑',
-      '時蔬炒溫體牛',
-      '芝麻鹽焗雞',
-      '港式煎釀三寶',
-      '老菜蔡炒飯',
-      '蛋花綠豆馬蹄爽',
+      {name:'薈苑五彩碟',price:0},
+      {name:'二十四節氣原煲老火湯',price:0},
+      {name:'雙龍戲珠港式龍蝦',price:0},
+      {name:'玉環花膠瑤柱脯',price:0},
+      {name:'古法盤龍蒸海斑',price:0},
+      {name:'時蔬炒溫體牛',price:0},
+      {name:'芝麻鹽焗雞',price:0},
+      {name:'港式煎釀三寶',price:0},
+      {name:'老菜蔡炒飯',price:0},
+      {name:'蛋花綠豆馬蹄爽',price:0},
     ],
   },
   {
@@ -930,16 +950,16 @@ let menus = [
     lineHeight: 14,
     price: 6880,
     dishes: [
-      '薈苑五彩碟',
-      '松茸竹笙烏雞燉花膠',
-      '雙龍戲珠港式龍蝦',
-      '蔥燒大海參',
-      '蝦籽麒麟斑',
-      '八寶富貴雞',
-      '琥珀炒雪花和牛',
-      '法海大蒲團',
-      '老菜蔡炒飯',
-      '蜜瓜西米露',
+      {name:'薈苑五彩碟',price:0},
+      {name:'松茸竹笙烏雞燉花膠',price:0},
+      {name:'雙龍戲珠港式龍蝦',price:0},
+      {name:'蔥燒大海參',price:0},
+      {name:'蝦籽麒麟斑',price:0},
+      {name:'八寶富貴雞',price:0},
+      {name:'琥珀炒雪花和牛',price:0},
+      {name:'法海大蒲團',price:0},
+      {name:'老菜蔡炒飯',price:0},
+      {name:'蜜瓜西米露',price:0},
     ],
   },
   {
@@ -951,16 +971,16 @@ let menus = [
     lineHeight: 14,
     price: 8980,
     dishes: [
-      '薈苑五彩碟',
-      '潮式紅燒大鮑翅',
-      '雙龍戲珠港式龍蝦',
-      '鮑魚玉環瑤柱脯 20頭',
-      '江南百花雞',
-      '魚奶湯堂灼大海斑',
-      '膏蟹蒸肉餅',
-      '芥蘭炒溫體牛',
-      '老菜蔡炒飯',
-      '蛋白杏仁茶',
+      {name:'薈苑五彩碟',price:0},
+      {name:'潮式紅燒大鮑翅',price:0},
+      {name:'雙龍戲珠港式龍蝦',price:0},
+      {name:'鮑魚玉環瑤柱脯 20頭',price:0},
+      {name:'江南百花雞',price:0},
+      {name:'魚奶湯堂灼大海斑',price:0},
+      {name:'膏蟹蒸肉餅',price:0},
+      {name:'芥蘭炒溫體牛',price:0},
+      {name:'老菜蔡炒飯',price:0},
+      {name:'蛋白杏仁茶',price:0},
     ],
   },
 ];
@@ -1024,6 +1044,10 @@ function applyLibraryData(raw) {
   LIBRARY = ordered;
 }
 
+function normDish(d) {
+  return typeof d === 'string' ? {name: d, price: 0} : d;
+}
+
 function loadFromStorage() {
   try {
     const lib = localStorage.getItem('huiyuan_library');
@@ -1034,7 +1058,14 @@ function loadFromStorage() {
     if (saved) {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length) {
-        menus = parsed;
+        menus = parsed.map(m => ({
+          ...m,
+          dishes: Array.isArray(m.dishes) ? m.dishes.map(d => {
+            const dish = normDish(d);
+            if (!dish.price) dish.price = getLibDishPrice(dish.name);
+            return dish;
+          }) : [],
+        }));
         currentMenuId = menus[0].id;
         nextId = Math.max(...menus.map(m => m.id)) + 1;
       }
@@ -1042,9 +1073,16 @@ function loadFromStorage() {
   } catch(e) {}
 }
 
+function fillDishPricesFromLib(menuList) {
+  menuList.forEach(m => m.dishes.forEach(d => {
+    if (!d.price) d.price = getLibDishPrice(d.name);
+  }));
+}
+
 function resetMenusOnly() {
   if (!confirm('確定將三款套餐還原為預設值？菜式庫不受影響。')) return;
   menus = JSON.parse(JSON.stringify(DEFAULT_MENUS));
+  fillDishPricesFromLib(menus);
   currentMenuId = menus[0].id;
   nextId = 10;
   renderMenuTabs();
@@ -1061,6 +1099,7 @@ function resetToDefaults() {
   localStorage.removeItem('huiyuan_menus');
   LIBRARY = JSON.parse(JSON.stringify(DEFAULT_LIBRARY));
   menus = JSON.parse(JSON.stringify(DEFAULT_MENUS));
+  fillDishPricesFromLib(menus);
   currentMenuId = 1;
   nextId = 10;
   renderMenuTabs();
@@ -1220,7 +1259,9 @@ function renderDishList() {
   const container = document.getElementById('edit-dish-list');
   container.innerHTML = '';
 
-  m.dishes.forEach((name, idx) => {
+  m.dishes.forEach((dish, idx) => {
+    const dish_ = normDish(dish);
+    const {name, price} = dish_;
     const row = document.createElement('div');
     row.className = 'dish-row';
     row.draggable = true;
@@ -1248,8 +1289,11 @@ function renderDishList() {
       <span class="drag-handle" title="拖曳排序">⠿</span>
       <span class="dish-row-num">${idx + 1}</span>
       <input class="dish-row-name" type="text" value="${escHtml(name)}"
+        onfocus="this.dataset.orig=this.value"
         oninput="updateDishName(${idx}, this.value)"
+        onblur="onDishNameBlur(${idx}, this)"
         placeholder="菜式名稱">
+
       <div class="dish-row-actions">
         ${buildDishSelect(name, idx)}
         <button class="btn-icon" title="刪除" onclick="removeDish(${idx})" style="color:#e07070;border-color:#5a2a2a">✕</button>
@@ -1262,14 +1306,15 @@ function renderDishList() {
 let dishRowViewCat = {};
 
 function buildDishSelect(currentName, idx) {
+  const nameStr = typeof currentName === 'object' ? currentName.name : currentName;
   let defaultCat = null;
   for (const [cat, dishes] of Object.entries(LIBRARY)) {
-    if (dishes.find(d => d.name === currentName)) { defaultCat = cat; break; }
+    if (dishes.find(d => d.name === nameStr)) { defaultCat = cat; break; }
   }
   const viewCat = dishRowViewCat[idx] || defaultCat;
   return `<div class="dish-dd" id="dish-dd-${idx}">`
        + `<button class="dish-dd-btn" onclick="toggleDishDD(event,${idx})">換菜式 ▾</button>`
-       + `<div class="dish-dd-panel">${buildDishDDPanel(idx, viewCat, currentName)}</div>`
+       + `<div class="dish-dd-panel">${buildDishDDPanel(idx, viewCat, nameStr)}</div>`
        + `</div>`;
 }
 
@@ -1317,7 +1362,7 @@ function switchDishCat(e, idx, cat) {
   else { dishRowViewCat[idx] = cat; }
   const dd = document.getElementById(`dish-dd-${idx}`);
   if (!dd) return;
-  const currentName = currentMenu().dishes[idx];
+  const currentName = normDish(currentMenu().dishes[idx]).name;
   const viewCat = dishRowViewCat[idx] || (() => {
     for (const [c, dishes] of Object.entries(LIBRARY)) {
       if (dishes.find(d => d.name === currentName)) return c;
@@ -1328,7 +1373,7 @@ function switchDishCat(e, idx, cat) {
 }
 
 function pickDishFromDD(idx, name) {
-  currentMenu().dishes[idx] = name;
+  currentMenu().dishes[idx] = {name, price: getLibDishPrice(name)};
   delete dishRowViewCat[idx];
   document.querySelectorAll('.dish-dd-panel.open').forEach(p => p.classList.remove('open'));
   document.querySelectorAll('.dish-dd-btn.open').forEach(b => b.classList.remove('open'));
@@ -1338,9 +1383,28 @@ function pickDishFromDD(idx, name) {
   saveToStorage();
 }
 
+function onDishNameBlur(idx, input) {
+  if (!input.dataset.orig || input.value === input.dataset.orig) return;
+  const current = normDish(currentMenu().dishes[idx]).price || '';
+  const newPrice = prompt(`「${input.value}」\n請輸入每位新價格：`, current);
+  if (newPrice !== null) {
+    updateDishPrice(idx, parseInt(newPrice) || 0);
+  }
+}
+
 function updateDishName(idx, val) {
-  currentMenu().dishes[idx] = val;
+  const dish = normDish(currentMenu().dishes[idx]);
+  dish.name = val;
+  currentMenu().dishes[idx] = dish;
   renderPreview();
+  updateSuggestedPrice();
+  saveToStorage();
+}
+
+function updateDishPrice(idx, val) {
+  const dish = normDish(currentMenu().dishes[idx]);
+  dish.price = parseInt(val) || 0;
+  currentMenu().dishes[idx] = dish;
   updateSuggestedPrice();
   saveToStorage();
 }
@@ -1364,7 +1428,7 @@ function removeDish(idx) {
 }
 
 function addBlankDish() {
-  currentMenu().dishes.push('');
+  currentMenu().dishes.push({name: '', price: 0});
   renderDishList();
   renderPreview();
   saveToStorage();
@@ -1391,7 +1455,7 @@ function renderLibrary() {
         <span class="lib-dish-add">＋</span>`;
       item.querySelector('.lib-dish-add').onclick = (e) => {
         e.stopPropagation();
-        currentMenu().dishes.push(d.name);
+        currentMenu().dishes.push({name: d.name, price: d.price || 0});
         renderDishList();
         renderPreview();
         updateSuggestedPrice();
@@ -1432,7 +1496,7 @@ function roundUpTo80(val) {
 
 function updateSuggestedPrice() {
   const m = currentMenu();
-  const total = m.dishes.filter(d => d.trim()).reduce((sum, d) => sum + getLibDishPrice(d), 0);
+  const total = m.dishes.map(normDish).filter(d => d.name.trim()).reduce((sum, d) => sum + (d.price || 0), 0);
   const suggested = total > 0 ? roundUpTo80(total) : null;
   const row = document.getElementById('suggested-price-row');
   const val = document.getElementById('suggested-price-val');
@@ -1467,7 +1531,7 @@ function newMenu() {
     fontSize: 20,
     lineHeight: 14,
     price: null,
-    dishes: ['薈苑五彩碟'],
+    dishes: [{name: '薈苑五彩碟', price: 0}],
   };
   menus.push(m);
   currentMenuId = m.id;
@@ -1517,17 +1581,17 @@ function renderPreview() {
   const dishWrap = document.createElement('div');
   dishWrap.className = 'menu-dishes';
 
-  const filledDishes = m.dishes.filter(d => d.trim());
+  const filledDishes = m.dishes.map(normDish).filter(d => d.name.trim());
   if (filledDishes.length === 0) {
     dishWrap.innerHTML = '<div class="menu-empty-hint">← 左側新增菜式</div>';
   } else {
-    filledDishes.forEach(name => {
+    filledDishes.forEach(d => {
       const div = document.createElement('div');
       div.className = 'menu-dish-name';
       div.style.fontSize = m.fontSize + 'px';
       div.style.paddingTop = (m.lineHeight * 0.5) + 'px';
       div.style.paddingBottom = (m.lineHeight * 0.5) + 'px';
-      div.textContent = name;
+      div.textContent = d.name;
       dishWrap.appendChild(div);
     });
   }
@@ -1568,7 +1632,7 @@ function importMenus(e) {
         fontSize: m.fontSize || 20,
         lineHeight: m.lineHeight || 14,
         price: m.price || null,
-        dishes: Array.isArray(m.dishes) ? m.dishes : [],
+        dishes: Array.isArray(m.dishes) ? m.dishes.map(normDish) : [],
       }));
       if (!confirm(`將匯入 ${incoming.length} 個套餐並取代目前所有套餐，確定繼續？`)) return;
       menus = incoming;
