@@ -230,40 +230,7 @@ select option { background: #1a1a1a; }
 
 .dish-row-name:focus { color: #fff; }
 
-.dish-row-price {
-  flex: 0 0 64px;
-  width: 64px;
-  max-width: 64px;
-  font-size: 12px;
-  color: #aaa;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid #3a3a3a;
-  padding: 2px 4px;
-  outline: none;
-  font-family: inherit;
-  text-align: right;
-  -moz-appearance: textfield;
-}
-.dish-row-price::-webkit-inner-spin-button,
-.dish-row-price::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-.dish-row-price:focus { color: #c9a96e; border-bottom-color: #c9a96e; }
-.dish-row-price::placeholder { color: #333; }
-
 .dish-row-actions { display: flex; gap: 4px; align-items: center; }
-
-.dish-row-select {
-  width: 130px;
-  background: #1a1a1a;
-  border: 1px solid #3a3a3a;
-  color: #888;
-  padding: 4px 6px;
-  border-radius: 5px;
-  font-size: 12px;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-.dish-row-select:focus { outline: none; border-color: #c9a96e; color: #c9a96e; }
 
 /* ===== CUSTOM DISH DROPDOWN ===== */
 .dish-dd {
@@ -376,43 +343,6 @@ select option { background: #1a1a1a; }
 
 .lib-dish:hover .lib-dish-add { color: #c9a96e; }
 
-.lib-dish-del {
-  color: #444;
-  font-size: 12px;
-  line-height: 1;
-  transition: color 0.15s;
-  padding: 2px 4px;
-}
-.lib-dish:hover .lib-dish-del { color: #e07070; }
-
-select.lib-dish-cat {
-  width: 54px;
-  background: #111;
-  border: 1px solid #2a2a2a;
-  color: #555;
-  padding: 2px 2px;
-  border-radius: 4px;
-  font-size: 10px;
-  flex-shrink: 0;
-  cursor: pointer;
-}
-select.lib-dish-cat:focus { outline: none; border-color: #c9a96e; color: #c9a96e; }
-
-input.lib-dish-price {
-  width: 62px;
-  background: #111;
-  border: 1px solid #2a2a2a;
-  color: #777;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 11px;
-  text-align: right;
-  flex-shrink: 0;
-}
-input.lib-dish-price:focus { outline: none; border-color: #c9a96e; color: #c9a96e; }
-input.lib-dish-price::-webkit-inner-spin-button,
-input.lib-dish-price::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-input.lib-dish-price { -moz-appearance: textfield; }
 
 .suggested-price-row {
   margin-top: 10px;
@@ -1111,15 +1041,6 @@ function resetToDefaults() {
   showToast('已重設為預設資料');
 }
 
-function exportLibrary() {
-  const blob = new Blob([JSON.stringify(LIBRARY, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = '薈苑菜式庫.json';
-  a.click();
-  URL.revokeObjectURL(a.href);
-  showToast('菜式庫已匯出');
-}
 
 function importLibrary(e) {
   const file = e.target.files[0];
@@ -1389,6 +1310,9 @@ function onDishNameBlur(idx, input) {
   const newPrice = prompt(`「${input.value}」\n請輸入每位新價格：`, current);
   if (newPrice !== null) {
     updateDishPrice(idx, parseInt(newPrice) || 0);
+  } else {
+    input.value = input.dataset.orig;
+    updateDishName(idx, input.dataset.orig);
   }
 }
 
@@ -1409,15 +1333,6 @@ function updateDishPrice(idx, val) {
   saveToStorage();
 }
 
-function moveDish(idx, dir) {
-  const dishes = currentMenu().dishes;
-  const newIdx = idx + dir;
-  if (newIdx < 0 || newIdx >= dishes.length) return;
-  [dishes[idx], dishes[newIdx]] = [dishes[newIdx], dishes[idx]];
-  renderDishList();
-  renderPreview();
-  saveToStorage();
-}
 
 function removeDish(idx) {
   currentMenu().dishes.splice(idx, 1);
@@ -1432,7 +1347,6 @@ function addBlankDish() {
   renderDishList();
   renderPreview();
   saveToStorage();
-  // focus the new input
   setTimeout(() => {
     const inputs = document.querySelectorAll('.dish-row-name');
     if (inputs.length) inputs[inputs.length - 1].focus();
@@ -1467,19 +1381,6 @@ function renderLibrary() {
   });
 }
 
-function addToLibrary() {
-  const name = document.getElementById('new-lib-name').value.trim();
-  const cat = document.getElementById('new-lib-cat').value;
-  const price = parseInt(document.getElementById('new-lib-price').value) || 0;
-  if (!name) return;
-  if (!LIBRARY[cat]) LIBRARY[cat] = [];
-  if (!LIBRARY[cat].find(d => d.name === name)) LIBRARY[cat].push({name, price});
-  document.getElementById('new-lib-name').value = '';
-  document.getElementById('new-lib-price').value = '';
-  renderLibrary();
-  saveToStorage();
-  showToast(`已加入菜式庫：${name}`);
-}
 
 function getLibDishPrice(name) {
   for (const dishes of Object.values(LIBRARY)) {
@@ -1542,17 +1443,6 @@ function newMenu() {
   saveToStorage();
 }
 
-function deleteCurrentMenu() {
-  if (menus.length <= 1) { showToast('至少保留一個套餐'); return; }
-  if (!confirm(`確定刪除「${currentMenu().label}」套餐？`)) return;
-  menus = menus.filter(m => m.id !== currentMenuId);
-  currentMenuId = menus[0].id;
-  renderMenuTabs();
-  loadMenuIntoForm();
-  renderDishList();
-  renderPreview();
-  saveToStorage();
-}
 
 function updateMenuLabel() {
   currentMenu().label = document.getElementById('menu-label').value;
@@ -1610,46 +1500,6 @@ function renderPreview() {
   setTimeout(updatePaperScale, 0);
 }
 
-// ======= IMPORT MENUS =======
-function triggerImportMenus() {
-  document.getElementById('import-menus-input').click();
-}
-
-function importMenus(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    try {
-      let data = JSON.parse(ev.target.result);
-      if (!Array.isArray(data)) data = [data];
-      if (!data.length || !data[0].dishes) throw new Error('格式錯誤');
-      const incoming = data.map((m, i) => ({
-        id: nextId++,
-        label: m.label || `匯入套餐 ${i + 1}`,
-        logoMain: m.logoMain || '貳零捌拾公館',
-        logoSub: m.logoSub || '薈苑',
-        fontSize: m.fontSize || 20,
-        lineHeight: m.lineHeight || 14,
-        price: m.price || null,
-        dishes: Array.isArray(m.dishes) ? m.dishes.map(normDish) : [],
-      }));
-      if (!confirm(`將匯入 ${incoming.length} 個套餐並取代目前所有套餐，確定繼續？`)) return;
-      menus = incoming;
-      currentMenuId = menus[0].id;
-      renderMenuTabs();
-      loadMenuIntoForm();
-      renderDishList();
-      renderPreview();
-      updateSuggestedPrice();
-      showToast(`已匯入 ${incoming.length} 個套餐`);
-    } catch (err) {
-      alert('檔案格式錯誤，請使用由本工具匯出的菜單 .json 檔');
-    }
-    e.target.value = '';
-  };
-  reader.readAsText(file);
-}
 
 // ======= PRINT =======
 function printMenu() {
