@@ -973,6 +973,11 @@ function applyLibraryData(raw) {
     ordered[cat] = raw[cat] ?? JSON.parse(JSON.stringify(DEFAULT_LIBRARY[cat]));
   });
   LIBRARY = ordered;
+  if (raw.menus && Array.isArray(raw.menus) && raw.menus.length > 0) {
+    menus = JSON.parse(JSON.stringify(raw.menus));
+    currentMenuId = menus[0].id;
+    nextId = Math.max(...menus.map(m => m.id)) + 1;
+  }
 }
 
 function normDish(d) {
