@@ -710,7 +710,7 @@ select option { background: #1a1a1a; }
 
 /* ===== PRINT ===== */
 @page {
-  size: 148mm 210mm;
+  size: A5 portrait;
   margin: 0;
 }
 
@@ -1511,8 +1511,19 @@ function renderPreview() {
 function printMenu() {
   const orig = document.title;
   document.title = currentMenu().label;
+
+  const forceA5 = document.createElement('style');
+  forceA5.textContent = '@page{size:A5 portrait!important;margin:0!important;}';
+  document.head.appendChild(forceA5);
+
+  const cleanup = () => {
+    document.title = orig;
+    forceA5.remove();
+    window.removeEventListener('afterprint', cleanup);
+  };
+  window.addEventListener('afterprint', cleanup);
+
   window.print();
-  document.title = orig;
 }
 
 // ======= UTILS =======
