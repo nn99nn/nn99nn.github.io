@@ -959,6 +959,7 @@ function addTouchDrag(row, idx) {
 // ======= STORAGE =======
 const DEFAULT_LIBRARY = JSON.parse(JSON.stringify(LIBRARY));
 const DEFAULT_MENUS = JSON.parse(JSON.stringify(menus));
+let IMPORTED_MENUS = null; // 上次匯入 JSON 的套餐，重置時優先使用
 
 function saveToStorage() {
   try {
@@ -975,6 +976,8 @@ function applyLibraryData(raw) {
   LIBRARY = ordered;
   if (raw.menus && Array.isArray(raw.menus) && raw.menus.length > 0) {
     menus = JSON.parse(JSON.stringify(raw.menus));
+    IMPORTED_MENUS = JSON.parse(JSON.stringify(raw.menus));
+    try { localStorage.setItem('huiyuan_imported_menus', JSON.stringify(raw.menus)); } catch(e) {}
     currentMenuId = menus[0].id;
     nextId = Math.max(...menus.map(m => m.id)) + 1;
   }
@@ -985,6 +988,10 @@ function normDish(d) {
 }
 
 function loadFromStorage() {
+  try {
+    const imp = localStorage.getItem('huiyuan_imported_menus');
+    if (imp) IMPORTED_MENUS = JSON.parse(imp);
+  } catch(e) {}
   try {
     const lib = localStorage.getItem('huiyuan_library');
     if (lib) applyLibraryData(JSON.parse(lib));
@@ -1016,17 +1023,21 @@ function fillDishPricesFromLib(menuList) {
 }
 
 function resetMenusOnly() {
-  if (!confirm('確定將三款套餐還原為預設值？菜式庫不受影響。')) return;
-  menus = JSON.parse(JSON.stringify(DEFAULT_MENUS));
+  const base = IMPORTED_MENUS || DEFAULT_MENUS;
+  const msg = IMPORTED_MENUS
+    ? '確定將所有套餐還原為上次匯入 JSON 的版本？菜式庫不受影響。'
+    : '確定將三款套餐還原為預設值？菜式庫不受影響。';
+  if (!confirm(msg)) return;
+  menus = JSON.parse(JSON.stringify(base));
   fillDishPricesFromLib(menus);
   currentMenuId = menus[0].id;
-  nextId = 10;
+  nextId = Math.max(...menus.map(m => m.id)) + 1;
   renderMenuTabs();
   loadMenuIntoForm();
   renderDishList();
   renderPreview();
   updateSuggestedPrice();
-  showToast('已還原三款預設套餐');
+  showToast(IMPORTED_MENUS ? '已還原為匯入 JSON 的套餐' : '已還原三款預設套餐');
 }
 
 function resetToDefaults() {
