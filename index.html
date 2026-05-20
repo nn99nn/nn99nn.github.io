@@ -68,7 +68,7 @@ header::after {
 .logo-text {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 6px;
 }
 
 .logo-zh {
@@ -852,8 +852,13 @@ function renderCats() {
         row.className = 'dish-row' + (dish.id === selDishId ? ' sel' : '');
 
         const badgeHtml = (dish.badge || []).map(b => {
-          const labels = { sig: '招牌', veg: '素食', lacto: '蛋奶素', spicy: '辣' };
-          return `<span class="badge badge-${b}">${labels[b] || b}</span>`;
+          const labels = {
+            zh: { sig: '招牌', veg: '素食', lacto: '蛋奶素', spicy: '辣' },
+            en: { sig: 'Sig',  veg: 'Vegan', lacto: 'Lacto', spicy: 'Spicy' },
+            ja: { sig: '看板', veg: 'ヴィーガン', lacto: '乳卵菜食', spicy: '辛' },
+          };
+          const l = labels[lang] || labels.zh;
+          return `<span class="badge badge-${b}">${l[b] || b}</span>`;
         }).join('');
 
         row.innerHTML = `
@@ -949,8 +954,13 @@ function renderDishInfo(dish) {
     : '';
 
   const badgeHtml = (dish.badge || []).map(b => {
-    const labels = { sig: '招牌 Signature', veg: '素食 Vegan', lacto: '蛋奶素 Lacto-veg', spicy: '辣 Spicy' };
-    return `<span class="badge badge-${b}">${labels[b] || b}</span>`;
+    const labels = {
+      zh: { sig: '招牌', veg: '素食', lacto: '蛋奶素', spicy: '辣' },
+      en: { sig: 'Signature', veg: 'Vegan', lacto: 'Lacto-vegetarian', spicy: 'Spicy' },
+      ja: { sig: '看板料理', veg: 'ヴィーガン', lacto: '乳卵菜食', spicy: '辛口' },
+    };
+    const l = labels[lang] || labels.zh;
+    return `<span class="badge badge-${b}">${l[b] || b}</span>`;
   }).join(' ');
 
   document.getElementById('dish-info').innerHTML = `
