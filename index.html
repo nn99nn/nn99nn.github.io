@@ -755,6 +755,13 @@ function escHtml(s) {
     .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+// 把菜名尾端的（...）縮小 30%
+function fmtName(str) {
+  const m = str.match(/^(.*?)(（[^）]+）)$/);
+  if (m) return escHtml(m[1]) + `<span style="font-size:0.7em">${escHtml(m[2])}</span>`;
+  return escHtml(str);
+}
+
 // ── Font size ──────────────────────────────────────────────
 let fontLevel = 0;  // 0–5
 
@@ -821,7 +828,7 @@ function renderCats() {
         }).join('');
 
         row.innerHTML = `
-          <div class="dish-row-name">${escHtml(t(dish.name))}</div>
+          <div class="dish-row-name">${fmtName(t(dish.name))}</div>
           ${badgeHtml ? `<div class="badges">${badgeHtml}</div>` : ''}
           ${dish.prices ? `<div class="dish-row-price">NT ${dish.prices[0].price.toLocaleString()}+</div>` : dish.price ? `<div class="dish-row-price">NT ${dish.price.toLocaleString()}</div>` : ''}`;
         row.onclick = () => selectDish(dish);
@@ -921,7 +928,7 @@ function renderDishInfo(dish) {
 
   document.getElementById('dish-info').innerHTML = `
     <div class="dish-names">
-      <div class="name-primary">${escHtml(nameP)}</div>
+      <div class="name-primary">${fmtName(nameP)}</div>
       ${nameS  ? `<div class="name-secondary">${escHtml(nameS)}</div>`  : ''}
       ${nameT3 ? `<div class="name-tertiary">${escHtml(nameT3)}</div>` : ''}
     </div>
