@@ -419,6 +419,17 @@ html.fs-6   { font-size: 30px; }
   font-weight: 300;
 }
 
+.dish-notice {
+  font-size: 0.6rem;
+  color: var(--mid);
+  opacity: 0.55;
+  letter-spacing: 0.5px;
+  line-height: 1.8;
+  margin-top: auto;
+  padding-top: 20px;
+  font-weight: 300;
+}
+
 /* Slide dots */
 .slide-dots {
   position: absolute;
@@ -736,6 +747,11 @@ const UI = {
   back:    { zh: '← 返回', en: '← Back', ja: '← 戻る' },
   per:     { zh: '每位', en: 'per person', ja: '一人様' },
   empty:   { zh: '敬請期待', en: 'Coming soon', ja: '近日公開' },
+  notice:  {
+    zh: '所有價格為新台幣（含稅），外加10%服務費。若您有任何飲食上的特殊需要，務請告知我們的服務人員。',
+    en: 'All prices are in New Taiwan Dollars (tax included), subject to a 10% service charge. Please inform our staff of any dietary requirements or allergies.',
+    ja: '表示価格はすべて新台湾ドル（税込）です。別途10%のサービス料を申し受けます。食事に関する特別なご要望はスタッフまでお申し付けください。',
+  },
 };
 
 // ── Helpers ────────────────────────────────────────────────
@@ -757,7 +773,7 @@ function escHtml(s) {
 
 // 把菜名尾端的（...）縮小 30%
 function fmtName(str) {
-  const m = str.match(/^(.*?)(（[^）]+）)$/);
+  const m = str.match(/^(.*?)(（[^）]+）|\([^)]+\))$/);
   if (m) return escHtml(m[1]) + `<span style="font-size:0.7em">${escHtml(m[2])}</span>`;
   return escHtml(str);
 }
@@ -890,17 +906,15 @@ function renderDishMedia(dish) {
 }
 
 function renderDishInfo(dish) {
-  const order = lang === 'zh' ? ['zh','en','ja']
-              : lang === 'en' ? ['en','zh','ja']
-              : ['ja','zh','en'];
+  const order = lang === 'zh' ? ['zh','en']
+              : lang === 'en' ? ['en','zh']
+              : ['ja','zh'];
 
-  const [p, s, t3] = order;
-  const nameP  = dish.name[p]  || '';
-  const nameS  = dish.name[s]  || '';
-  const nameT3 = dish.name[t3] || '';
-  const descP  = (dish.desc && dish.desc[p])  || '';
-  const descS  = (dish.desc && dish.desc[s])  || '';
-  const descT3 = (dish.desc && dish.desc[t3]) || '';
+  const [p, s] = order;
+  const nameP = dish.name[p] || '';
+  const nameS = dish.name[s] || '';
+  const descP = (dish.desc && dish.desc[p]) || '';
+  const descS = (dish.desc && dish.desc[s]) || '';
 
   const priceHtml = dish.prices
     ? `<div class="dish-price-multi">
@@ -929,17 +943,16 @@ function renderDishInfo(dish) {
   document.getElementById('dish-info').innerHTML = `
     <div class="dish-names">
       <div class="name-primary">${fmtName(nameP)}</div>
-      ${nameS  ? `<div class="name-secondary">${escHtml(nameS)}</div>`  : ''}
-      ${nameT3 ? `<div class="name-tertiary">${escHtml(nameT3)}</div>` : ''}
+      ${nameS ? `<div class="name-secondary">${escHtml(nameS)}</div>` : ''}
     </div>
     ${priceHtml}
     ${badgeHtml ? `<div class="badges" style="margin-top:4px">${badgeHtml}</div>` : ''}
-    ${(descP || descS || descT3) ? `
+    ${(descP || descS) ? `
       <div class="dish-divider"></div>
-      ${descP  ? `<div class="dish-desc">${escHtml(descP)}</div>`  : ''}
-      ${descS  ? `<div class="dish-desc" style="opacity:0.7;font-family:'Cormorant Garamond',Georgia,serif;font-style:italic">${escHtml(descS)}</div>`  : ''}
-      ${descT3 ? `<div class="dish-desc" style="opacity:0.55">${escHtml(descT3)}</div>` : ''}
+      ${descP ? `<div class="dish-desc">${escHtml(descP)}</div>` : ''}
+      ${descS ? `<div class="dish-desc" style="opacity:0.7;font-family:'Cormorant Garamond',Georgia,serif;font-style:italic">${escHtml(descS)}</div>` : ''}
     ` : ''}
+    <div class="dish-notice">${escHtml(UI.notice[lang])}</div>
   `;
 }
 
