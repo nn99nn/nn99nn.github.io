@@ -2,1562 +2,1022 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-<title>薈苑菜單編輯器</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>捌伍添第 85TD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400&display=swap" rel="stylesheet">
+<script src="menu-data.js"></script>
 <style>
+:root {
+  --cream:    #f8f4ea;
+  --cream2:   #f0e9d4;
+  --gold:     #c8a45a;
+  --gold-dim: rgba(200,164,90,0.22);
+  --gold-glow:rgba(200,164,90,0.08);
+  --charcoal: #2c2a27;
+  --mid:      #8a806a;
+  --left-w:   300px;
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-body {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
-  background: #1a1a1a;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
+html, body {
+  height: 100%;
+  background: var(--cream);
+  color: var(--charcoal);
+  font-family: 'Noto Sans TC', sans-serif;
+  -webkit-tap-highlight-color: transparent;
   overflow: hidden;
 }
 
 /* ===== HEADER ===== */
 header {
-  background: #111;
-  border-bottom: 1px solid #333;
-  padding: 10px 20px;
+  height: 60px;
+  background: var(--cream);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 0 28px;
   flex-shrink: 0;
+  position: relative;
+  z-index: 10;
 }
 
-.header-title {
-  color: #c9a96e;
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 2px;
+header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--gold) 30%, var(--gold) 70%, transparent 100%);
+  opacity: 0.5;
 }
 
-.header-actions { display: flex; gap: 8px; }
-
-/* ===== MAIN LAYOUT ===== */
-.main {
+.logo-wrap {
   display: flex;
-  flex: 1;
-  overflow: hidden;
+  align-items: center;
+  gap: 14px;
 }
 
-/* ===== LEFT PANEL ===== */
-.left {
-  width: 380px;
-  min-width: 300px;
-  background: #242424;
+.logo-wrap img {
+  height: 38px;
+  width: auto;
+  mix-blend-mode: multiply;
+}
+
+.logo-text {
   display: flex;
   flex-direction: column;
-  border-right: 1px solid #333;
-  overflow: hidden;
+  gap: 1px;
 }
 
-.left-tabs {
-  display: flex;
-  background: #1a1a1a;
-  border-bottom: 1px solid #333;
-  flex-shrink: 0;
-}
-
-.left-tabs button {
-  flex: 1;
-  padding: 11px 6px;
-  border: none;
-  background: transparent;
-  color: #666;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  transition: all 0.2s;
-  border-bottom: 2px solid transparent;
-}
-
-.left-tabs button.active {
-  color: #c9a96e;
-  border-bottom-color: #c9a96e;
-}
-
-.tab-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
-  display: none;
-}
-
-.tab-content.active { display: flex; flex-direction: column; gap: 12px; }
-
-/* ===== FORM ===== */
-.field-label {
-  font-size: 10px;
-  color: #666;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-bottom: 5px;
-}
-
-input[type="text"], input[type="number"], select, textarea {
-  width: 100%;
-  background: #1a1a1a;
-  border: 1px solid #3a3a3a;
-  color: #e0e0e0;
-  padding: 9px 12px;
-  border-radius: 6px;
-  font-size: 14px;
-  transition: border 0.2s;
-  font-family: inherit;
-}
-
-input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: #c9a96e;
-}
-
-textarea { resize: none; min-height: 56px; }
-
-select option { background: #1a1a1a; }
-
-/* ===== BUTTONS ===== */
-.btn {
-  padding: 9px 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-
-.btn-gold {
-  background: #c9a96e;
-  color: #111;
-}
-.btn-gold:hover { background: #b8944f; }
-
-.btn-outline {
-  background: transparent;
-  border: 1px solid #444;
-  color: #aaa;
-}
-.btn-outline:hover { border-color: #c9a96e; color: #c9a96e; }
-
-.btn-danger {
-  background: transparent;
-  border: 1px solid #5a2a2a;
-  color: #e07070;
-}
-.btn-danger:hover { background: #3a1a1a; }
-
-.btn-sm { padding: 5px 10px; font-size: 11px; border-radius: 4px; }
-
-.btn-icon {
-  width: 28px;
-  height: 28px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #3a3a3a;
-  border-radius: 4px;
-  background: #1a1a1a;
-  color: #888;
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.15s;
-  flex-shrink: 0;
-}
-.btn-icon:hover { border-color: #c9a96e; color: #c9a96e; }
-
-/* ===== SECTION DIVIDER ===== */
-.section-divider {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 10px;
-  color: #555;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-.section-divider::before, .section-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: #333;
-}
-
-/* ===== CURRENT MENU DISH LIST ===== */
-.dish-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: #1e1e1e;
-  border: 1px solid #333;
-  border-radius: 6px;
-  padding: 8px 10px;
-  transition: border-color 0.15s;
-}
-
-.dish-row:hover { border-color: #555; }
-
-.dish-row.dragging { opacity: 0.4; }
-.dish-row.drag-over { border-color: #c9a96e; background: rgba(201,169,110,0.08); }
-
-.dish-row-num {
-  font-size: 11px;
-  color: #555;
-  min-width: 18px;
-  text-align: center;
-}
-
-.dish-row-name {
-  flex: 1;
-  font-size: 15px;
-  color: #ddd;
-  background: transparent;
-  border: none;
-  padding: 0;
-  outline: none;
-  font-family: inherit;
-  min-width: 0;
-}
-
-.dish-row-name::placeholder { color: #444; }
-
-.dish-row-name:focus { color: #fff; }
-
-.dish-row-actions { display: flex; gap: 4px; align-items: center; }
-
-/* ===== CUSTOM DISH DROPDOWN ===== */
-.dish-dd {
-  position: relative;
-  display: inline-block;
-  flex-shrink: 0;
-}
-.dish-dd-btn {
-  width: 80px;
-  background: #1a1a1a;
-  border: 1px solid #3a3a3a;
-  color: #888;
-  padding: 4px 6px;
-  border-radius: 5px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-  white-space: nowrap;
-  text-align: left;
-}
-.dish-dd-btn:hover, .dish-dd-btn.open { border-color: #c9a96e; color: #c9a96e; }
-.dish-dd-panel {
-  display: none;
-  position: absolute;
-  right: 0;
-  top: calc(100% + 3px);
-  background: #242424;
-  border: 1px solid #444;
-  border-radius: 6px;
-  min-width: 160px;
-  max-height: 280px;
-  overflow-y: auto;
-  z-index: 999;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
-}
-.dish-dd-panel.open { display: block; }
-.dish-dd-item {
-  padding: 7px 14px;
-  font-size: 13px;
-  color: #ccc;
-  cursor: pointer;
-  white-space: nowrap;
-}
-.dish-dd-item:hover { background: #333; color: #fff; }
-.dish-dd-item.dd-selected { color: #c9a96e; }
-.dish-dd-item.dd-selected::before { content: '✓  '; }
-.dish-dd-item.dd-cat { color: #aaa; }
-.dish-dd-item.dd-cat::after { content: ' ▸'; }
-.dish-dd-item.dd-back { color: #777; font-size: 11px; }
-.dish-dd-sep {
-  padding: 3px 14px;
-  font-size: 10px;
-  color: #555;
-  background: #1a1a1a;
-  border-bottom: 1px solid #333;
-  border-top: 1px solid #333;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.drag-handle {
-  cursor: grab;
-  color: #444;
-  font-size: 14px;
-  padding: 0 2px;
-  user-select: none;
-}
-
-.drag-handle:active { cursor: grabbing; }
-
-/* ===== LIBRARY ===== */
-.cat-section { margin-bottom: 8px; }
-
-.cat-label {
-  font-size: 10px;
-  color: #666;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-bottom: 6px;
-  padding: 4px 0;
-  border-bottom: 1px solid #2a2a2a;
-}
-
-.lib-dish {
-  display: flex;
-  align-items: center;
-  padding: 7px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background 0.15s;
-  gap: 8px;
-  margin-bottom: 3px;
-}
-
-.lib-dish:hover { background: #2a2a2a; }
-
-.lib-dish-name {
-  flex: 1;
-  font-size: 14px;
-  color: #ccc;
-}
-
-.lib-dish-add {
-  color: #555;
-  font-size: 18px;
+.logo-zh {
+  font-size: 0.94rem;
+  letter-spacing: 5px;
+  color: var(--gold);
+  font-weight: 400;
   line-height: 1;
-  transition: color 0.15s;
 }
 
-.lib-dish:hover .lib-dish-add { color: #c9a96e; }
-
-
-.suggested-price-row {
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  background: #1e1a12;
-  border: 1px solid #4a3820;
-  border-radius: 6px;
-  flex-wrap: wrap;
-}
-.suggested-label {
-  font-size: 11px;
-  color: #888;
-  white-space: nowrap;
-}
-.suggested-label strong { color: #c9a96e; }
-.suggested-arrow { color: #555; font-size: 12px; }
-
-/* ===== PRICE SECTION ===== */
-.price-bar {
-  padding: 12px 16px;
-  background: #1a1a1a;
-  border-top: 1px solid #333;
-  flex-shrink: 0;
+.logo-en {
+  font-size: 0.56rem;
+  letter-spacing: 4px;
+  color: var(--mid);
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1;
 }
 
-.price-row {
+/* Language toggle */
+/* Header right controls */
+.header-controls {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.price-label {
-  font-size: 12px;
-  color: #888;
-  white-space: nowrap;
-  font-weight: 600;
-}
-
-.price-input-wrap {
+/* Font size toggle */
+.font-toggle {
   display: flex;
   align-items: center;
-  background: #111;
-  border: 1px solid #3a3a3a;
-  border-radius: 6px;
+  border: 1px solid var(--gold-dim);
+  border-radius: 4px;
   overflow: hidden;
-  flex: 1;
 }
 
-.price-currency {
-  padding: 8px 10px;
-  color: #c9a96e;
-  font-size: 14px;
-  font-weight: 700;
-  background: #1e1e1e;
-  border-right: 1px solid #3a3a3a;
-  white-space: nowrap;
+.font-icon {
+  padding: 0 9px;
+  color: var(--mid);
+  font-size: 0.875rem;
+  line-height: 1;
+  pointer-events: none;
+  border-right: 1px solid var(--gold-dim);
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 7px 9px;
 }
 
-#price-input {
+.font-btn {
+  padding: 7px 12px;
   border: none;
+  border-left: 1px solid var(--gold-dim);
   background: transparent;
-  flex: 1;
-  padding: 8px 10px;
-  color: #e0e0e0;
-  font-size: 18px;
-  font-weight: 700;
-  min-width: 0;
+  color: var(--mid);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 500;
+  transition: all 0.2s;
+  line-height: 1;
 }
 
-#price-input:focus { outline: none; }
+.font-btn:hover { background: var(--gold-glow); color: var(--gold); }
 
-.per-person {
-  font-size: 11px;
-  color: #666;
-  white-space: nowrap;
+/* Font size levels — only text scales, layout stays fixed */
+html        { font-size: 18px; }
+html.fs-1   { font-size: 18px; }
+html.fs-2   { font-size: 20px; }
+html.fs-3   { font-size: 22px; }
+html.fs-4   { font-size: 24px; }
+html.fs-5   { font-size: 27px; }
+html.fs-6   { font-size: 30px; }
+
+.lang-toggle {
+  display: flex;
+  border: 1px solid var(--gold-dim);
+  border-radius: 4px;
+  overflow: hidden;
 }
 
-/* ===== MENU SELECTOR ===== */
-.menu-tabs-wrap {
-  padding: 12px 16px 0;
-  background: #1a1a1a;
+.lang-btn {
+  padding: 7px 14px;
+  border: none;
+  border-right: 1px solid var(--gold-dim);
+  background: transparent;
+  color: var(--mid);
+  font-size: 0.69rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  font-family: 'Noto Sans TC', sans-serif;
+  transition: all 0.2s;
+}
+
+.lang-btn:last-child { border-right: none; }
+
+.lang-btn.active {
+  background: var(--gold);
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.lang-btn:not(.active):hover {
+  background: var(--gold-glow);
+  color: var(--gold);
+}
+
+/* ===== APP LAYOUT ===== */
+.app {
+  height: calc(100vh - 60px);
+  display: flex;
+  overflow: hidden;
+}
+
+/* ===== LEFT PANEL ===== */
+.left {
+  width: var(--left-w);
+  min-width: var(--left-w);
+  background: var(--cream);
+  border-right: 1px solid var(--gold-dim);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.left-top-bar {
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--cream2) 100%);
   flex-shrink: 0;
 }
 
-.menu-tabs {
+.cat-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.cat-scroll::-webkit-scrollbar { width: 3px; }
+.cat-scroll::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+
+/* Category */
+.cat-item { border-bottom: 1px solid var(--gold-dim); }
+
+.cat-hd {
   display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  padding-bottom: 12px;
-}
-
-.menu-tab-btn {
-  padding: 6px 14px;
-  border-radius: 20px;
-  border: 1px solid #333;
-  background: transparent;
-  color: #888;
-  font-size: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
   cursor: pointer;
+  transition: background 0.18s;
+  user-select: none;
+  min-height: 60px;
+}
+
+.cat-hd:hover, .cat-hd.open { background: var(--gold-glow); }
+
+.cat-hd-names { display: flex; flex-direction: column; gap: 3px; }
+
+.cat-name-main {
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 3px;
+  color: var(--charcoal);
+  line-height: 1;
+}
+
+.cat-hd.open .cat-name-main { color: var(--gold); }
+
+.cat-name-sub {
+  font-size: 0.625rem;
+  letter-spacing: 2px;
+  color: var(--mid);
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-style: italic;
+  line-height: 1;
+}
+
+.cat-arrow {
+  color: var(--gold);
+  font-size: 0.56rem;
+  transition: transform 0.25s;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.cat-hd.open .cat-arrow { transform: rotate(180deg); }
+
+/* Dish rows */
+.dish-rows { display: none; background: rgba(200,164,90,0.03); }
+.dish-rows.open { display: block; }
+
+.dish-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px 12px 28px;
+  cursor: pointer;
+  border-top: 1px solid rgba(200,164,90,0.07);
+  transition: background 0.15s;
+  min-height: 48px;
+}
+
+.dish-row:hover    { background: rgba(200,164,90,0.09); }
+.dish-row.sel      { background: rgba(200,164,90,0.15); }
+
+.dish-row-name {
+  flex: 1;
+  font-size: 0.844rem;
+  letter-spacing: 1px;
+  color: var(--charcoal);
+  line-height: 1.4;
+  min-width: 0;
+}
+
+.dish-row.sel .dish-row-name { color: var(--gold); }
+
+.dish-row-price {
+  font-size: 0.69rem;
+  color: var(--mid);
+  font-family: 'Helvetica Neue', Arial, sans-serif;
   white-space: nowrap;
-  transition: all 0.15s;
+  flex-shrink: 0;
 }
 
-.menu-tab-btn.active {
-  background: #c9a96e;
-  border-color: #c9a96e;
-  color: #111;
-  font-weight: 700;
+/* Badges */
+.badges { display: flex; gap: 3px; flex-shrink: 0; }
+.badge {
+  font-size: 0.56rem;
+  padding: 1px 4px;
+  border-radius: 2px;
+  letter-spacing: 0.5px;
+  font-family: 'Cormorant Garamond', serif;
 }
+.badge-sig   { background: rgba(200,164,90,0.2); color: var(--gold); border: 1px solid rgba(200,164,90,0.4); }
+.badge-veg   { background: rgba(80,140,80,0.1);  color: #5a8a5a;    border: 1px solid rgba(80,140,80,0.3); }
+.badge-spicy { background: rgba(180,60,40,0.1);  color: #b43c28;    border: 1px solid rgba(180,60,40,0.3); }
 
-.menu-tab-btn:not(.active):hover { border-color: #c9a96e; color: #c9a96e; }
+/* Empty category hint */
+.cat-empty {
+  padding: 14px 28px;
+  font-size: 0.69rem;
+  color: var(--mid);
+  font-style: italic;
+  letter-spacing: 1px;
+  opacity: 0.6;
+  font-family: 'Cormorant Garamond', serif;
+}
 
 /* ===== RIGHT PANEL ===== */
 .right {
   flex: 1;
-  background: #111;
-  overflow-y: auto;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 32px;
-}
-
-/* ===== MENU PAPER ===== */
-.menu-paper {
-  background: white;
-  /* A5: 148mm × 210mm at 96dpi ≈ 559 × 794px */
-  width: 559px;
-  min-height: 794px;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 72px 60px 72px;
   position: relative;
-  font-family: 'Aptos', 'Calibri', 'Arial', sans-serif;
-}
-
-@media print {
-  .menu-paper {
-    width: 148mm;
-    min-height: 210mm;
-    box-shadow: none;
-    padding: 18mm 20mm;
-  }
-}
-
-/* Logo image */
-.menu-logo {
-  margin-bottom: 10px;
+  overflow: hidden;
   display: flex;
+  flex-direction: column;
+}
+
+/* Decorative corners */
+.corner {
+  position: absolute;
+  width: 20px; height: 20px;
+  border-color: var(--gold);
+  border-style: solid;
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 5;
+}
+.corner.tl { top: 12px; left: 12px; border-width: 1px 0 0 1px; }
+.corner.tr { top: 12px; right: 12px; border-width: 1px 1px 0 0; }
+.corner.bl { bottom: 12px; left: 12px; border-width: 0 0 1px 1px; }
+.corner.br { bottom: 12px; right: 12px; border-width: 0 1px 1px 0; }
+
+/* ===== INTRO PANEL ===== */
+#intro-panel {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
   justify-content: center;
 }
 
-.menu-logo img {
-  height: 160px;
-  width: auto;
-  object-fit: contain;
+.slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
-/* Dish list */
-.menu-dishes {
-  width: 100%;
+.slide.active { opacity: 1; z-index: 1; }
+
+.slide img   { width: 100%; height: 100%; object-fit: cover; }
+.slide iframe { width: 100%; height: 100%; border: none; }
+
+/* Default intro (no slides configured) */
+.intro-default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: center;
   gap: 0;
-  flex: 1;
-}
-
-.menu-dish-name {
+  padding: 60px;
   text-align: center;
-  color: #1a1a1a;
-  font-weight: normal;
-  font-family: 'Aptos', 'Calibri', 'Arial', sans-serif;
-  line-height: 1;
-  padding: 4px 0;
+  height: 100%;
   width: 100%;
 }
 
-/* Price block */
-.menu-price-block {
-  margin-top: 44px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
+.intro-monogram {
+  height: 110px;
+  width: auto;
+  opacity: 0.45;
+  margin-bottom: 28px;
+  mix-blend-mode: multiply;
 }
 
-.menu-price-num {
-  font-size: 12px;
-  color: #1a1a1a;
-  letter-spacing: 2px;
+.intro-gold-line {
+  width: 1px;
+  height: 48px;
+  background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+  margin: 20px auto;
+}
+
+.intro-title-zh {
+  font-size: 2.75rem;
+  letter-spacing: 14px;
+  color: var(--gold);
+  font-weight: 300;
+  line-height: 1;
+}
+
+.intro-title-en {
+  font-size: 0.75rem;
+  letter-spacing: 8px;
+  color: var(--mid);
   font-family: 'Helvetica Neue', Arial, sans-serif;
+  margin-top: 10px;
+}
+
+.intro-copy {
+  font-size: 0.75rem;
+  color: var(--mid);
+  letter-spacing: 2px;
+  line-height: 2.6;
+  margin-top: 8px;
   font-weight: 300;
 }
 
-.menu-price-per {
-  font-size: 12px;
-  color: #555;
-  letter-spacing: 3px;
-}
-
-.menu-empty-hint {
-  color: #bbb;
-  font-size: 13px;
-  font-family: sans-serif;
-  text-align: center;
-  margin: 40px 0;
-}
-
-/* ===== SCROLLBAR ===== */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #3a3a3a; border-radius: 3px; }
-
-/* ===== TOAST ===== */
-.toast {
-  position: fixed;
+/* Slide dots */
+.slide-dots {
+  position: absolute;
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  background: #c9a96e;
-  color: #111;
-  padding: 8px 20px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  opacity: 0;
-  transition: opacity 0.3s;
-  pointer-events: none;
-  z-index: 999;
+  display: flex;
+  gap: 10px;
+  z-index: 10;
 }
 
-.toast.show { opacity: 1; }
-
-/* ===== INFO BOX ===== */
-.info-box {
-  background: #2a2218;
-  border: 1px solid #4a3820;
-  border-radius: 6px;
-  padding: 10px 12px;
-  font-size: 12px;
-  color: #c9a96e;
-  line-height: 1.5;
+.dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  border: 1px solid var(--gold);
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.3s;
 }
 
-.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.dot.active { background: var(--gold); }
 
-/* ===== VIEW TOGGLE (mobile only) ===== */
-.view-toggle-bar {
+/* ===== DISH PANEL ===== */
+#dish-panel {
+  flex: 1;
   display: none;
-  background: #1a1a1a;
-  border-bottom: 1px solid #333;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#dish-panel.active { display: flex; }
+
+.dish-media {
+  flex-shrink: 0;
+  height: 54%;
+  background: #1a1510;
+  position: relative;
+  overflow: hidden;
+}
+
+.dish-media img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+.dish-media iframe {
+  width: 100%; height: 100%;
+  border: none;
+}
+
+.media-placeholder {
+  width: 100%; height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a1510 0%, #2a2018 100%);
+}
+
+.media-placeholder img {
+  height: 90px; width: auto;
+  opacity: 0.18;
+  object-fit: contain;
+}
+
+/* Back button */
+.back-btn {
+  position: absolute;
+  top: 14px; left: 14px;
+  z-index: 10;
+  background: rgba(0,0,0,0.45);
+  border: 1px solid rgba(200,164,90,0.4);
+  color: var(--gold);
+  font-size: 0.69rem;
+  letter-spacing: 2px;
+  padding: 6px 14px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  transition: background 0.2s;
+}
+
+.back-btn:hover { background: rgba(0,0,0,0.65); }
+
+/* Dish info */
+.dish-info {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px 44px 28px;
+  background: var(--cream);
+  border-top: 1px solid var(--gold-dim);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dish-info::-webkit-scrollbar { width: 3px; }
+.dish-info::-webkit-scrollbar-thumb { background: var(--gold-dim); }
+
+.dish-names { display: flex; flex-direction: column; gap: 5px; }
+
+.name-primary {
+  font-size: 1.875rem;
+  font-weight: 400;
+  letter-spacing: 4px;
+  color: var(--charcoal);
+  line-height: 1.2;
+}
+
+.name-secondary {
+  font-size: 0.875rem;
+  letter-spacing: 2px;
+  color: var(--mid);
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.name-tertiary {
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
+  color: var(--mid);
+  line-height: 1.4;
+  opacity: 0.75;
+}
+
+.dish-price {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  padding-top: 4px;
+}
+
+.price-nt {
+  font-size: 0.69rem;
+  letter-spacing: 1px;
+  color: var(--gold);
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+.price-num {
+  font-size: 1.625rem;
+  color: var(--gold);
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 400;
+  letter-spacing: 1px;
+}
+
+.price-per {
+  font-size: 0.69rem;
+  color: var(--mid);
+  letter-spacing: 1.5px;
+}
+
+.dish-price-multi {
+  display: flex;
+  gap: 20px;
+  align-items: flex-end;
+  padding-top: 4px;
+}
+.dish-price-multi .dish-price {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding-top: 0;
+}
+.dish-price-multi .price-inner {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+.price-label {
+  font-size: 0.65rem;
+  color: var(--mid);
+  letter-spacing: 1px;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+
+.dish-divider {
+  width: 48px;
+  height: 1px;
+  background: linear-gradient(to right, var(--gold), transparent);
+  margin: 2px 0;
+}
+
+.dish-desc {
+  font-size: 0.8125rem;
+  color: var(--mid);
+  line-height: 1.1;
+  letter-spacing: 0.5px;
+  font-weight: 300;
+}
+
+/* ===== PORTRAIT IMAGE LAYOUT ===== */
+#dish-panel.portrait {
+  flex-direction: row;
+}
+
+#dish-panel.portrait .dish-media {
+  width: 42%;
+  height: 100%;
   flex-shrink: 0;
 }
-.view-toggle-bar button {
-  flex: 1;
-  padding: 10px;
-  border: none;
-  background: transparent;
-  color: #666;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  letter-spacing: 0.5px;
-}
-.view-toggle-bar button.active {
-  color: #c9a96e;
-  border-bottom-color: #c9a96e;
+
+#dish-panel.portrait .dish-info {
+  border-top: none;
+  border-left: 1px solid var(--gold-dim);
 }
 
-/* ===== MENU PAPER WRAPPER (scaling) ===== */
-.menu-paper-wrap {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-/* ===== TABLET (768px – 1024px) ===== */
-@media (max-width: 1024px) and (min-width: 768px) {
-  .left {
-    width: 300px;
-    min-width: 260px;
-  }
-  .right {
-    padding: 20px 16px;
-  }
-  .dish-row-select {
-    width: 100px;
-  }
+#dish-panel.portrait .dish-media img {
+  object-fit: contain;
+  background: #1a1510;
 }
 
 /* ===== MOBILE (<768px) ===== */
 @media (max-width: 767px) {
-  body {
-    height: auto;
-    min-height: 100vh;
-    overflow: auto;
-  }
+  html, body { overflow: auto; }
 
-  .view-toggle-bar {
-    display: flex;
-  }
-
-  .main {
+  .app {
     flex-direction: column;
+    height: auto;
     overflow: visible;
-    flex: none;
   }
 
   .left {
     width: 100%;
     min-width: unset;
     border-right: none;
-    border-bottom: 1px solid #333;
-    display: none;
+    border-bottom: 1px solid var(--gold-dim);
     overflow: visible;
   }
 
-  .left.mobile-active { display: flex; }
+  .cat-scroll { overflow: visible; }
 
   .right {
-    display: none;
-    padding: 16px;
-    overflow: visible;
-    min-height: 500px;
-    justify-content: flex-start;
+    min-height: 80vw;
   }
 
-  .right.mobile-active { display: flex; }
+  #intro-panel, #dish-panel { min-height: 70vw; }
 
-  .header-title {
-    font-size: 13px;
-    letter-spacing: 1px;
-  }
+  .dish-media { height: 52vw; min-height: 220px; }
 
-  .header-actions { gap: 4px; }
+  .dish-info { padding: 20px 24px; }
 
-  .btn-sm {
-    padding: 5px 8px;
-    font-size: 11px;
-  }
+  .name-primary { font-size: 1.5rem; }
 
-  .dish-row-select { width: 90px; }
+  .intro-title-zh { font-size: 2rem; }
 
-  .left-tabs button {
-    font-size: 11px;
-    padding: 10px 4px;
-  }
-
-  .tab-content { padding: 12px; }
-
-  .price-bar { padding: 10px 12px; }
-}
-
-/* ===== PRINT ===== */
-@page {
-  size: A5 portrait;
-  margin: 0;
-}
-
-@media print {
-  body { background: white; height: 210mm; overflow: hidden; }
-  .left, header, .view-toggle-bar { display: none; }
-  .main { height: 210mm; }
-  .right { padding: 0; background: white; align-items: stretch; justify-content: stretch; display: flex !important; }
-  .menu-paper-wrap { width: 100%; height: 100%; }
-  .menu-paper {
-    width: 148mm;
-    height: 210mm;
-    min-height: unset;
-    box-shadow: none;
-    padding: 18mm 20mm;
-    transform: none !important;
-  }
+  .corner { display: none; }
 }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="header-title">薈苑菜單編輯器</div>
-  <div class="header-actions">
-    <button class="btn btn-outline btn-sm" onclick="printMenu()">列印 / 匯出</button>
-    <button class="btn btn-outline btn-sm" onclick="document.getElementById('import-library-input').click()">匯入菜式庫</button>
-    <input type="file" id="import-library-input" accept=".json" style="display:none" onchange="importLibrary(event)">
-
-    <button class="btn btn-outline btn-sm" onclick="newMenu()">＋ 新增套餐</button>
-    <button class="btn btn-danger btn-sm" onclick="resetMenusOnly()">重置套餐</button>
+  <div class="logo-wrap">
+    <img src="85 Logo.png" alt="85TD">
+    <div class="logo-text">
+      <div class="logo-zh">捌伍添第</div>
+      <div class="logo-en">85TD · TAIPEI 101</div>
+    </div>
+  </div>
+  <div class="header-controls">
+    <div class="font-toggle">
+      <span class="font-icon">Aa</span>
+      <button class="font-btn" onclick="stepFont(-1)">−</button>
+      <button class="font-btn" onclick="stepFont(+1)">+</button>
+    </div>
+    <div class="lang-toggle">
+      <button class="lang-btn active" data-lang="zh" onclick="setLang('zh')">中文</button>
+      <button class="lang-btn"        data-lang="en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn"        data-lang="ja" onclick="setLang('ja')">日本語</button>
+    </div>
   </div>
 </header>
 
-<div class="view-toggle-bar" id="view-toggle-bar">
-  <button class="active" data-view="edit" onclick="toggleView('edit')">✏️ 編輯</button>
-  <button data-view="preview" onclick="toggleView('preview')">👁 預覽</button>
-</div>
+<div class="app">
 
-<div class="main">
-
-  <!-- LEFT -->
+  <!-- LEFT: Category navigation -->
   <div class="left">
-
-    <!-- Menu selector -->
-    <div class="menu-tabs-wrap">
-      <div class="menu-tabs" id="menu-tabs"></div>
-    </div>
-
-    <!-- Tabs -->
-    <div class="left-tabs">
-      <button class="active" onclick="switchTab('edit', this)">編輯菜式</button>
-      <button onclick="switchTab('library', this)">菜式庫</button>
-      <button onclick="switchTab('settings', this)">菜單設定</button>
-    </div>
-
-    <!-- TAB: 編輯菜式 -->
-    <div class="tab-content active" id="tab-edit">
-      <div class="info-box">拖曳 ⠿ 調整順序，點擊菜式名稱可直接編輯，或從「菜式庫」加入常用菜式。</div>
-      <div id="edit-dish-list"></div>
-      <button class="btn btn-outline" style="width:100%" onclick="addBlankDish()">＋ 新增一行</button>
-    </div>
-
-    <!-- TAB: 菜式庫 -->
-    <div class="tab-content" id="tab-library">
-      <div class="info-box">點擊菜式右側「＋」即可加入目前套餐末端。</div>
-      <div id="library-list"></div>
-
-    </div>
-
-    <!-- TAB: 菜單設定 -->
-    <div class="tab-content" id="tab-settings">
-      <div>
-        <div class="field-label">套餐名稱（用於分頁標籤）</div>
-        <input type="text" id="menu-label" placeholder="例：8,980 套餐" oninput="updateMenuLabel()">
-      </div>
-      <div class="section-divider">菜單抬頭</div>
-      <div class="info-box">Logo 使用圖片檔案：<br>Desktop/Picture1.jpg</div>
-      <div class="section-divider">資料管理</div>
-      <button class="btn btn-danger" style="width:100%" onclick="resetToDefaults()">重設所有資料為預設值</button>
-      <div class="section-divider">字體大小</div>
-      <div class="row2">
-        <div>
-          <div class="field-label">菜式字體 (pt → px)</div>
-          <input type="number" id="font-size" value="20" min="12" max="60" oninput="renderPreview()">
-        </div>
-        <div>
-          <div class="field-label">行距 (px)</div>
-          <input type="number" id="line-height" value="14" min="0" max="60" oninput="renderPreview()">
-        </div>
-      </div>
-    </div>
-
-    <!-- Price bar -->
-    <div class="price-bar">
-      <div class="price-row">
-        <div class="price-label">每位收費</div>
-        <div class="price-input-wrap">
-          <div class="price-currency">TWD</div>
-          <input type="text" id="price-input" placeholder="0" oninput="renderPreview()">
-        </div>
-        <div class="per-person">每位</div>
-      </div>
-      <div class="suggested-price-row" id="suggested-price-row" style="display:none">
-        <span class="suggested-label">參考價格 <span id="ref-cost-val">-</span></span>
-        <span class="suggested-arrow">→</span>
-        <span class="suggested-label">建議售價 <strong id="suggested-price-val">-</strong></span>
-        <button class="btn btn-gold btn-sm" onclick="applySuggestedPrice()">套用</button>
-      </div>
-    </div>
-
+    <div class="left-top-bar"></div>
+    <div class="cat-scroll" id="cat-scroll"></div>
   </div>
 
-  <!-- RIGHT -->
+  <!-- RIGHT: Display area -->
   <div class="right">
-    <div class="menu-paper-wrap" id="menu-paper-wrap">
-      <div class="menu-paper" id="menu-paper">
-        <!-- rendered by JS -->
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+
+    <!-- Intro / carousel -->
+    <div id="intro-panel"></div>
+
+    <!-- Dish detail -->
+    <div id="dish-panel">
+      <div class="dish-media" id="dish-media">
+        <button class="back-btn" onclick="showIntro()">← 返回</button>
       </div>
+      <div class="dish-info" id="dish-info"></div>
     </div>
   </div>
 
 </div>
-
-<div class="toast" id="toast"></div>
 
 <script>
-// ======= DATA =======
-let LIBRARY = {
-  "冷盤": [],
-  "湯羹": [],
-  "乾貨": [],
-  "海鮮": [],
-  "魚": [],
-  "禽類": [],
-  "肉類": [],
-  "蔬菜": [],
-  "飯麵": [],
-  "甜品": [],
+// ── State ──────────────────────────────────────────────────
+let lang        = 'zh';
+let selDishId   = null;
+let slideIdx    = 0;
+let slideTimer  = null;
+const openCats  = new Set();
+
+// ── Translations ───────────────────────────────────────────
+const UI = {
+  back:    { zh: '← 返回', en: '← Back', ja: '← 戻る' },
+  per:     { zh: '每位', en: 'per person', ja: '一人様' },
+  empty:   { zh: '敬請期待', en: 'Coming soon', ja: '近日公開' },
 };
 
-let menus = [
-  {
-    id: 1,
-    label: '4,280 套餐',
-    logoMain: '貳零捌拾公館',
-    logoSub: '薈苑',
-    fontSize: 20,
-    lineHeight: 14,
-    price: 4280,
-    dishes: [
-      {name:'薈苑四季盤',price:0},
-      {name:'即烤叉燒皇',price:0},
-      {name:'二十四節氣原煲老火湯',price:0},
-      {name:'雙龍戲珠港式龍蝦',price:0},
-      {name:'玉環花膠瑤柱脯',price:0},
-      {name:'古法盤龍蒸海斑',price:0},
-      {name:'芝麻鹽焗雞',price:0},
-      {name:'時蔬炒溫體牛',price:0},
-      {name:'老菜蔡炒飯',price:0},
-      {name:'蛋花綠豆馬蹄爽',price:0},
-    ],
-  },
-  {
-    id: 2,
-    label: '5,380 套餐',
-    logoMain: '貳零捌拾公館',
-    logoSub: '薈苑',
-    fontSize: 20,
-    lineHeight: 14,
-    price: 5380,
-    dishes: [
-      {name:'薈苑五彩碟',price:0},
-      {name:'花膠松茸海螺煲烏雞',price:0},
-      {name:'雙龍戲珠港式龍蝦',price:0},
-      {name:'蝦籽麒麟斑',price:0},
-      {name:'八寶富貴雞',price:0},
-      {name:'琥珀炒雪花和牛',price:0},
-      {name:'法海大蒲團',price:0},
-      {name:'老菜蔡炒飯',price:0},
-      {name:'蜜瓜西米露',price:0},
-    ],
-  },
-  {
-    id: 3,
-    label: '8,880 套餐',
-    logoMain: '貳零捌拾公館',
-    logoSub: '薈苑',
-    fontSize: 20,
-    lineHeight: 14,
-    price: 8880,
-    dishes: [
-      {name:'薈苑五彩碟',price:0},
-      {name:'現烤叉燒皇',price:0},
-      {name:'潮式紅燒大鮑翅',price:0},
-      {name:'鮑魚玉環瑤柱脯 20頭',price:0},
-      {name:'雙龍戲珠港式龍蝦',price:0},
-      {name:'江南百花雞',price:0},
-      {name:'魚奶湯堂灼大海斑',price:0},
-      {name:'老菜蔡炒飯',price:0},
-      {name:'蛋白杏仁茶',price:0},
-    ],
-  },
-];
+// ── Helpers ────────────────────────────────────────────────
+const t = obj => (obj && (obj[lang] || obj.zh || obj.en || ''));
 
-let currentMenuId = 1;
-let nextId = 10;
-let dragSrcIndex = null;
-
-function addTouchDrag(row, idx) {
-  const handle = row.querySelector('.drag-handle');
-  if (!handle) return;
-  handle.addEventListener('touchstart', e => {
-    e.preventDefault();
-    dragSrcIndex = idx;
-    row.classList.add('dragging');
-  }, { passive: false });
-  handle.addEventListener('touchmove', e => {
-    e.preventDefault();
-    const touch = e.touches[0];
-    const el = document.elementFromPoint(touch.clientX, touch.clientY);
-    const targetRow = el && el.closest('.dish-row');
-    document.querySelectorAll('.dish-row').forEach(r => r.classList.remove('drag-over'));
-    if (targetRow && targetRow !== row) targetRow.classList.add('drag-over');
-  }, { passive: false });
-  handle.addEventListener('touchend', e => {
-    e.preventDefault();
-    row.classList.remove('dragging');
-    document.querySelectorAll('.dish-row').forEach(r => r.classList.remove('drag-over'));
-    const touch = e.changedTouches[0];
-    const el = document.elementFromPoint(touch.clientX, touch.clientY);
-    const targetRow = el && el.closest('.dish-row');
-    if (!targetRow || dragSrcIndex === null) { dragSrcIndex = null; return; }
-    const targetIdx = parseInt(targetRow.dataset.idx);
-    if (isNaN(targetIdx) || targetIdx === dragSrcIndex) { dragSrcIndex = null; return; }
-    const dishes = currentMenu().dishes;
-    const [moved] = dishes.splice(dragSrcIndex, 1);
-    dishes.splice(targetIdx, 0, moved);
-    dragSrcIndex = null;
-    renderDishList();
-    renderPreview();
-    saveToStorage();
-  }, { passive: false });
+function findDish(id) {
+  for (const cat of MENU.categories) {
+    const d = cat.dishes.find(x => x.id === id);
+    if (d) return d;
+  }
+  return null;
 }
 
-// ======= STORAGE =======
-const DEFAULT_LIBRARY = JSON.parse(JSON.stringify(LIBRARY));
-const DEFAULT_MENUS = JSON.parse(JSON.stringify(menus));
-let IMPORTED_MENUS = null; // 上次匯入 JSON 的套餐，重置時優先使用
-
-function saveToStorage() {
-  try {
-    localStorage.setItem('huiyuan_library', JSON.stringify(LIBRARY));
-    localStorage.setItem('huiyuan_menus', JSON.stringify(menus));
-  } catch(e) {}
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function applyLibraryData(raw) {
-  const ordered = {};
-  Object.keys(DEFAULT_LIBRARY).forEach(cat => {
-    ordered[cat] = raw[cat] ?? JSON.parse(JSON.stringify(DEFAULT_LIBRARY[cat]));
-  });
-  LIBRARY = ordered;
-  if (raw.menus && Array.isArray(raw.menus) && raw.menus.length > 0) {
-    menus = JSON.parse(JSON.stringify(raw.menus));
-    IMPORTED_MENUS = JSON.parse(JSON.stringify(raw.menus));
-    try { localStorage.setItem('huiyuan_imported_menus', JSON.stringify(raw.menus)); } catch(e) {}
-    currentMenuId = menus[0].id;
-    nextId = Math.max(...menus.map(m => m.id)) + 1;
+// ── Font size ──────────────────────────────────────────────
+let fontLevel = 0;  // 0–5
+
+function stepFont(dir) {
+  fontLevel = Math.min(6, Math.max(0, fontLevel + dir));
+  document.documentElement.classList.remove('fs-1', 'fs-2', 'fs-3', 'fs-4', 'fs-5', 'fs-6');
+  if (fontLevel > 0) document.documentElement.classList.add('fs-' + fontLevel);
+}
+
+// ── Language ───────────────────────────────────────────────
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.lang === l));
+  document.querySelector('.back-btn').textContent = UI.back[lang];
+  renderCats();
+  if (selDishId) {
+    const d = findDish(selDishId);
+    if (d) renderDishInfo(d);
   }
 }
 
-function normDish(d) {
-  return typeof d === 'string' ? {name: d, price: 0} : d;
-}
+// ── Category list ──────────────────────────────────────────
+function renderCats() {
+  const el = document.getElementById('cat-scroll');
+  el.innerHTML = '';
 
-function loadFromStorage() {
-  try {
-    const imp = localStorage.getItem('huiyuan_imported_menus');
-    if (imp) IMPORTED_MENUS = JSON.parse(imp);
-  } catch(e) {}
-  try {
-    const lib = localStorage.getItem('huiyuan_library');
-    if (lib) applyLibraryData(JSON.parse(lib));
-  } catch(e) {}
-  try {
-    const saved = localStorage.getItem('huiyuan_menus');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length) {
-        menus = parsed.map(m => ({
-          ...m,
-          dishes: Array.isArray(m.dishes) ? m.dishes.map(d => {
-            const dish = normDish(d);
-            if (!dish.price) dish.price = getLibDishPrice(dish.name);
-            return dish;
-          }) : [],
-        }));
-        currentMenuId = menus[0].id;
-        nextId = Math.max(...menus.map(m => m.id)) + 1;
-      }
-    }
-  } catch(e) {}
-}
+  MENU.categories.forEach(cat => {
+    const isOpen = openCats.has(cat.id);
 
-function fillDishPricesFromLib(menuList) {
-  menuList.forEach(m => m.dishes.forEach(d => {
-    if (!d.price) d.price = getLibDishPrice(d.name);
-  }));
-}
+    const item = document.createElement('div');
+    item.className = 'cat-item';
 
-function resetMenusOnly() {
-  const base = IMPORTED_MENUS || DEFAULT_MENUS;
-  const msg = IMPORTED_MENUS
-    ? '確定將所有套餐還原為上次匯入 JSON 的版本？菜式庫不受影響。'
-    : '確定將三款套餐還原為預設值？菜式庫不受影響。';
-  if (!confirm(msg)) return;
-  menus = JSON.parse(JSON.stringify(base));
-  fillDishPricesFromLib(menus);
-  currentMenuId = menus[0].id;
-  nextId = Math.max(...menus.map(m => m.id)) + 1;
-  renderMenuTabs();
-  loadMenuIntoForm();
-  renderDishList();
-  renderPreview();
-  updateSuggestedPrice();
-  showToast(IMPORTED_MENUS ? '已還原為匯入 JSON 的套餐' : '已還原三款預設套餐');
-}
+    const sub = lang === 'en' ? (cat.name.zh || '')
+              : lang === 'ja' ? (cat.name.en || '')
+              : (cat.name.en || '');
 
-function resetToDefaults() {
-  if (!confirm('確定重設所有資料為預設值？菜式庫與所有套餐都會還原。')) return;
-  localStorage.removeItem('huiyuan_library');
-  localStorage.removeItem('huiyuan_menus');
-  LIBRARY = JSON.parse(JSON.stringify(DEFAULT_LIBRARY));
-  menus = JSON.parse(JSON.stringify(DEFAULT_MENUS));
-  fillDishPricesFromLib(menus);
-  currentMenuId = 1;
-  nextId = 10;
-  renderMenuTabs();
-  loadMenuIntoForm();
-  renderLibrary();
-  renderDishList();
-  renderPreview();
-  updateSuggestedPrice();
-  showToast('已重設為預設資料');
-}
-
-
-function importLibrary(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    try {
-      const data = JSON.parse(ev.target.result);
-      applyLibraryData(data);
-      saveToStorage();
-      renderLibrary();
-      showToast('菜式庫已匯入');
-    } catch(err) {
-      alert('檔案格式錯誤，請使用由本工具匯出的 .json 檔');
-    }
-    e.target.value = '';
-  };
-  reader.readAsText(file);
-}
-
-function currentMenu() {
-  return menus.find(m => m.id === currentMenuId);
-}
-
-// ======= RESPONSIVE =======
-function toggleView(view) {
-  document.querySelectorAll('.view-toggle-bar button').forEach(b => {
-    b.classList.toggle('active', b.dataset.view === view);
-  });
-  const left = document.querySelector('.left');
-  const right = document.querySelector('.right');
-  if (view === 'edit') {
-    left.classList.add('mobile-active');
-    right.classList.remove('mobile-active');
-  } else {
-    left.classList.remove('mobile-active');
-    right.classList.add('mobile-active');
-    setTimeout(updatePaperScale, 50);
-  }
-}
-
-function updatePaperScale() {
-  const rightEl = document.querySelector('.right');
-  const paper = document.getElementById('menu-paper');
-  const wrap = document.getElementById('menu-paper-wrap');
-  if (!rightEl || !paper || !wrap) return;
-
-  const padding = window.innerWidth <= 767 ? 32 : 40;
-  const availW = rightEl.clientWidth - padding;
-  const scale = Math.min(1, availW / 559);
-
-  if (scale < 1) {
-    paper.style.transform = `scale(${scale})`;
-    paper.style.transformOrigin = 'top center';
-    wrap.style.height = (paper.scrollHeight * scale) + 'px';
-    wrap.style.width = (559 * scale) + 'px';
-  } else {
-    paper.style.transform = '';
-    paper.style.transformOrigin = '';
-    wrap.style.height = '';
-    wrap.style.width = '';
-  }
-}
-
-function initMobileLayout() {
-  const isMobile = window.innerWidth < 768;
-  const left = document.querySelector('.left');
-  const right = document.querySelector('.right');
-  if (isMobile) {
-    if (!left.classList.contains('mobile-active') && !right.classList.contains('mobile-active')) {
-      left.classList.add('mobile-active');
-    }
-  } else {
-    left.classList.remove('mobile-active');
-    right.classList.remove('mobile-active');
-  }
-  updatePaperScale();
-}
-
-window.addEventListener('resize', initMobileLayout);
-
-// ======= INIT =======
-window.onload = () => {
-  loadFromStorage();
-  renderMenuTabs();
-  loadMenuIntoForm();
-  renderLibrary();
-  renderDishList();
-  renderPreview();
-  updateSuggestedPrice();
-  initMobileLayout();
-};
-
-// ======= MENU TABS =======
-function renderMenuTabs() {
-  const wrap = document.getElementById('menu-tabs');
-  wrap.innerHTML = '';
-  menus.forEach(m => {
-    const btn = document.createElement('button');
-    btn.className = 'menu-tab-btn' + (m.id === currentMenuId ? ' active' : '');
-    btn.textContent = m.label;
-    btn.onclick = () => selectMenu(m.id);
-    wrap.appendChild(btn);
-  });
-}
-
-function selectMenu(id) {
-  currentMenuId = id;
-  renderMenuTabs();
-  loadMenuIntoForm();
-  renderDishList();
-  renderPreview();
-  updateSuggestedPrice();
-}
-
-// ======= FORM LOAD =======
-function loadMenuIntoForm() {
-  const m = currentMenu();
-  document.getElementById('menu-label').value = m.label;
-  document.getElementById('font-size').value = m.fontSize || 20;
-  document.getElementById('line-height').value = m.lineHeight || 14;
-  document.getElementById('price-input').value = m.price || '';
-}
-
-// ======= TABS =======
-function switchTab(tab, btn) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.left-tabs button').forEach(el => el.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.add('active');
-  btn.classList.add('active');
-}
-
-// ======= DISH LIST =======
-function renderDishList() {
-  dishRowViewCat = {};
-  const m = currentMenu();
-  const container = document.getElementById('edit-dish-list');
-  container.innerHTML = '';
-
-  m.dishes.forEach((dish, idx) => {
-    const dish_ = normDish(dish);
-    const {name, price} = dish_;
-    const row = document.createElement('div');
-    row.className = 'dish-row';
-    row.draggable = true;
-    row.dataset.idx = idx;
-
-    row.ondragstart = e => {
-      dragSrcIndex = idx;
-      setTimeout(() => row.classList.add('dragging'), 0);
-    };
-    row.ondragend = () => row.classList.remove('dragging');
-    row.ondragover = e => { e.preventDefault(); };
-    row.ondrop = e => {
-      e.preventDefault();
-      if (dragSrcIndex === null || dragSrcIndex === idx) return;
-      const dishes = currentMenu().dishes;
-      const [moved] = dishes.splice(dragSrcIndex, 1);
-      dishes.splice(idx, 0, moved);
-      dragSrcIndex = null;
-      renderDishList();
-      renderPreview();
-      saveToStorage();
+    const hd = document.createElement('div');
+    hd.className = 'cat-hd' + (isOpen ? ' open' : '');
+    hd.innerHTML = `
+      <div class="cat-hd-names">
+        <div class="cat-name-main">${escHtml(t(cat.name))}</div>
+        ${sub ? `<div class="cat-name-sub">${escHtml(sub)}</div>` : ''}
+      </div>
+      <span class="cat-arrow">▼</span>`;
+    hd.onclick = () => {
+      openCats.has(cat.id) ? openCats.delete(cat.id) : openCats.add(cat.id);
+      renderCats();
     };
 
-    row.innerHTML = `
-      <span class="drag-handle" title="拖曳排序">⠿</span>
-      <span class="dish-row-num">${idx + 1}</span>
-      <input class="dish-row-name" type="text" value="${escHtml(name)}"
-        onfocus="this.dataset.orig=this.value"
-        oninput="updateDishName(${idx}, this.value)"
-        onblur="onDishNameBlur(${idx}, this)"
-        placeholder="菜式名稱">
+    const rows = document.createElement('div');
+    rows.className = 'dish-rows' + (isOpen ? ' open' : '');
 
-      <div class="dish-row-actions">
-        ${buildDishSelect(name, idx)}
-        <button class="btn-icon" title="刪除" onclick="removeDish(${idx})" style="color:#e07070;border-color:#5a2a2a">✕</button>
-      </div>`;
-    addTouchDrag(row, idx);
-    container.appendChild(row);
-  });
-}
+    if (cat.dishes.length === 0) {
+      rows.innerHTML = `<div class="cat-empty">${UI.empty[lang]}</div>`;
+    } else {
+      cat.dishes.forEach(dish => {
+        const row = document.createElement('div');
+        row.className = 'dish-row' + (dish.id === selDishId ? ' sel' : '');
 
-let dishRowViewCat = {};
+        const badgeHtml = (dish.badge || []).map(b => {
+          const labels = { sig: '招牌', veg: '素', spicy: '辣' };
+          return `<span class="badge badge-${b}">${labels[b] || b}</span>`;
+        }).join('');
 
-function buildDishSelect(currentName, idx) {
-  const nameStr = typeof currentName === 'object' ? currentName.name : currentName;
-  let defaultCat = null;
-  for (const [cat, dishes] of Object.entries(LIBRARY)) {
-    if (dishes.find(d => d.name === nameStr)) { defaultCat = cat; break; }
-  }
-  const viewCat = dishRowViewCat[idx] || defaultCat;
-  return `<div class="dish-dd" id="dish-dd-${idx}">`
-       + `<button class="dish-dd-btn" onclick="toggleDishDD(event,${idx})">換菜式 ▾</button>`
-       + `<div class="dish-dd-panel">${buildDishDDPanel(idx, viewCat, nameStr)}</div>`
-       + `</div>`;
-}
-
-function buildDishDDPanel(idx, viewCat, currentName) {
-  let html = '';
-  if (viewCat && LIBRARY[viewCat]) {
-    html += `<div class="dish-dd-item dd-back" onclick="switchDishCat(event,${idx},null)">← 所有類別</div>`;
-    html += `<div class="dish-dd-sep">${escHtml(viewCat)}</div>`;
-    LIBRARY[viewCat].forEach(d => {
-      const sel = d.name === currentName ? ' dd-selected' : '';
-      html += `<div class="dish-dd-item${sel}" data-name="${escHtml(d.name)}" onclick="pickDishFromDD(${idx},this.dataset.name)">${escHtml(d.name)}</div>`;
-    });
-    const otherCats = Object.keys(LIBRARY).filter(c => c !== viewCat && LIBRARY[c].length > 0);
-    if (otherCats.length) {
-      html += `<div class="dish-dd-sep">切換類別</div>`;
-      otherCats.forEach(c => {
-        html += `<div class="dish-dd-item dd-cat" data-cat="${escHtml(c)}" onclick="switchDishCat(event,${idx},this.dataset.cat)">${escHtml(c)}</div>`;
+        row.innerHTML = `
+          <div class="dish-row-name">${escHtml(t(dish.name))}</div>
+          ${badgeHtml ? `<div class="badges">${badgeHtml}</div>` : ''}
+          ${dish.prices ? `<div class="dish-row-price">NT ${dish.prices[0].price.toLocaleString()}+</div>` : dish.price ? `<div class="dish-row-price">NT ${dish.price.toLocaleString()}</div>` : ''}`;
+        row.onclick = () => selectDish(dish);
+        rows.appendChild(row);
       });
     }
-  } else {
-    html += `<div class="dish-dd-sep">選擇類別</div>`;
-    Object.entries(LIBRARY).forEach(([cat, dishes]) => {
-      if (!dishes.length) return;
-      html += `<div class="dish-dd-item dd-cat" data-cat="${escHtml(cat)}" onclick="switchDishCat(event,${idx},this.dataset.cat)">${escHtml(cat)}</div>`;
-    });
-  }
-  return html;
-}
 
-function toggleDishDD(e, idx) {
-  e.stopPropagation();
-  const dd = document.getElementById(`dish-dd-${idx}`);
-  if (!dd) return;
-  const panel = dd.querySelector('.dish-dd-panel');
-  const btn = dd.querySelector('.dish-dd-btn');
-  const isOpen = panel.classList.contains('open');
-  document.querySelectorAll('.dish-dd-panel.open').forEach(p => p.classList.remove('open'));
-  document.querySelectorAll('.dish-dd-btn.open').forEach(b => b.classList.remove('open'));
-  if (!isOpen) { panel.classList.add('open'); btn.classList.add('open'); }
-}
-
-function switchDishCat(e, idx, cat) {
-  e.stopPropagation();
-  if (cat === null) { delete dishRowViewCat[idx]; }
-  else { dishRowViewCat[idx] = cat; }
-  const dd = document.getElementById(`dish-dd-${idx}`);
-  if (!dd) return;
-  const currentName = normDish(currentMenu().dishes[idx]).name;
-  const viewCat = dishRowViewCat[idx] || (() => {
-    for (const [c, dishes] of Object.entries(LIBRARY)) {
-      if (dishes.find(d => d.name === currentName)) return c;
-    }
-    return null;
-  })();
-  dd.querySelector('.dish-dd-panel').innerHTML = buildDishDDPanel(idx, viewCat, currentName);
-}
-
-function pickDishFromDD(idx, name) {
-  currentMenu().dishes[idx] = {name, price: getLibDishPrice(name)};
-  delete dishRowViewCat[idx];
-  document.querySelectorAll('.dish-dd-panel.open').forEach(p => p.classList.remove('open'));
-  document.querySelectorAll('.dish-dd-btn.open').forEach(b => b.classList.remove('open'));
-  renderDishList();
-  renderPreview();
-  updateSuggestedPrice();
-  saveToStorage();
-}
-
-function onDishNameBlur(idx, input) {
-  if (!input.dataset.orig || input.value === input.dataset.orig) return;
-  const current = normDish(currentMenu().dishes[idx]).price || '';
-  const newPrice = prompt(`「${input.value}」\n請輸入每位新價格：`, current);
-  if (newPrice !== null) {
-    updateDishPrice(idx, parseInt(newPrice) || 0);
-  } else {
-    input.value = input.dataset.orig;
-    updateDishName(idx, input.dataset.orig);
-  }
-}
-
-function updateDishName(idx, val) {
-  const dish = normDish(currentMenu().dishes[idx]);
-  dish.name = val;
-  currentMenu().dishes[idx] = dish;
-  renderPreview();
-  updateSuggestedPrice();
-  saveToStorage();
-}
-
-function updateDishPrice(idx, val) {
-  const dish = normDish(currentMenu().dishes[idx]);
-  dish.price = parseInt(val) || 0;
-  currentMenu().dishes[idx] = dish;
-  updateSuggestedPrice();
-  saveToStorage();
-}
-
-
-function removeDish(idx) {
-  currentMenu().dishes.splice(idx, 1);
-  renderDishList();
-  renderPreview();
-  updateSuggestedPrice();
-  saveToStorage();
-}
-
-function addBlankDish() {
-  currentMenu().dishes.push({name: '', price: 0});
-  renderDishList();
-  renderPreview();
-  saveToStorage();
-  setTimeout(() => {
-    const inputs = document.querySelectorAll('.dish-row-name');
-    if (inputs.length) inputs[inputs.length - 1].focus();
-  }, 50);
-}
-
-// ======= LIBRARY =======
-function renderLibrary() {
-  const container = document.getElementById('library-list');
-  container.innerHTML = '';
-  Object.entries(LIBRARY).forEach(([cat, dishes]) => {
-    const sec = document.createElement('div');
-    sec.className = 'cat-section';
-    sec.innerHTML = `<div class="cat-label">${cat}</div>`;
-    dishes.forEach(d => {
-      const item = document.createElement('div');
-      item.className = 'lib-dish';
-      item.innerHTML = `
-        <span class="lib-dish-name">${d.name}</span>
-        <span class="lib-dish-add">＋</span>`;
-      item.querySelector('.lib-dish-add').onclick = (e) => {
-        e.stopPropagation();
-        currentMenu().dishes.push({name: d.name, price: d.price || 0});
-        renderDishList();
-        renderPreview();
-        updateSuggestedPrice();
-        showToast(`已加入：${d.name}`);
-      };
-      sec.appendChild(item);
-    });
-    container.appendChild(sec);
+    item.appendChild(hd);
+    item.appendChild(rows);
+    el.appendChild(item);
   });
 }
 
+// ── Select dish ────────────────────────────────────────────
+function selectDish(dish) {
+  selDishId = dish.id;
+  stopSlide();
 
-function getLibDishPrice(name) {
-  for (const dishes of Object.values(LIBRARY)) {
-    const found = dishes.find(d => d.name === name);
-    if (found) return found.price || 0;
-  }
-  return 0;
-}
+  document.getElementById('intro-panel').style.display = 'none';
+  document.getElementById('dish-panel').classList.add('active');
 
-function roundUpTo80(val) {
-  const n = Math.ceil((val - 80) / 100);
-  return n * 100 + 80;
-}
+  renderDishMedia(dish);
+  renderDishInfo(dish);
+  renderCats();
 
-function updateSuggestedPrice() {
-  const m = currentMenu();
-  const total = m.dishes.map(normDish).filter(d => d.name.trim()).reduce((sum, d) => sum + (d.price || 0), 0);
-  const suggested = total > 0 ? roundUpTo80(total) : null;
-  const row = document.getElementById('suggested-price-row');
-  const val = document.getElementById('suggested-price-val');
-  const cost = document.getElementById('ref-cost-val');
-  if (total > 0) {
-    cost.textContent = `TWD ${total.toLocaleString()}`;
-    val.textContent = `TWD ${suggested.toLocaleString()}`;
-    row.style.display = 'flex';
-  } else {
-    row.style.display = 'none';
+  document.getElementById('dish-info').scrollTop = 0;
+
+  if (window.innerWidth < 768) {
+    document.querySelector('.right').scrollIntoView({ behavior: 'smooth' });
   }
 }
 
-function applySuggestedPrice() {
-  const val = document.getElementById('suggested-price-val').textContent.replace(/[^0-9]/g, '');
-  if (!val) return;
-  document.getElementById('price-input').value = val;
-  currentMenu().price = parseInt(val);
-  renderPreview();
-  showToast('已套用建議售價');
+function setPortrait(on) {
+  document.getElementById('dish-panel').classList.toggle('portrait', on);
 }
 
-// ======= MENU MANAGEMENT =======
-function newMenu() {
-  const label = prompt('新套餐名稱（例：10,800 套餐）', '新套餐');
-  if (!label) return;
-  const m = {
-    id: nextId++,
-    label,
-    logoMain: '貳零捌拾公館',
-    logoSub: '薈苑',
-    fontSize: 20,
-    lineHeight: 14,
-    price: null,
-    dishes: [{name: '薈苑五彩碟', price: 0}],
-  };
-  menus.push(m);
-  currentMenuId = m.id;
-  renderMenuTabs();
-  loadMenuIntoForm();
-  renderDishList();
-  renderPreview();
-  saveToStorage();
-}
+function renderDishMedia(dish) {
+  const el = document.getElementById('dish-media');
+  const btn = el.querySelector('.back-btn');
+  setPortrait(false);
 
-
-function updateMenuLabel() {
-  currentMenu().label = document.getElementById('menu-label').value;
-  renderMenuTabs();
-  saveToStorage();
-}
-
-// ======= PREVIEW =======
-function renderPreview() {
-  const m = currentMenu();
-  // read live form values
-  m.fontSize  = parseInt(document.getElementById('font-size').value)  || 20;
-  m.lineHeight= parseInt(document.getElementById('line-height').value) || 14;
-  m.price     = document.getElementById('price-input').value || '';
-
-  const paper = document.getElementById('menu-paper');
-  paper.innerHTML = '';
-
-  // Logo
-  const logo = document.createElement('div');
-  logo.className = 'menu-logo';
-  logo.innerHTML = `<img src="Picture1.jpg" alt="薈苑 logo">`;
-  paper.appendChild(logo);
-
-  // Dish list
-  const dishWrap = document.createElement('div');
-  dishWrap.className = 'menu-dishes';
-
-  const filledDishes = m.dishes.map(normDish).filter(d => d.name.trim());
-  if (filledDishes.length === 0) {
-    dishWrap.innerHTML = '<div class="menu-empty-hint">← 左側新增菜式</div>';
+  if (dish.youtube) {
+    el.innerHTML = `<iframe src="https://www.youtube.com/embed/${escHtml(dish.youtube)}?rel=0&modestbranding=1" allowfullscreen></iframe>`;
+  } else if (dish.image) {
+    const img = document.createElement('img');
+    img.alt = t(dish.name);
+    img.onload = () => {
+      if (window.innerWidth >= 768) {
+        setPortrait(img.naturalHeight > img.naturalWidth);
+      }
+    };
+    img.src = escHtml(dish.image);
+    el.innerHTML = '';
+    el.appendChild(img);
   } else {
-    filledDishes.forEach(d => {
-      const div = document.createElement('div');
-      div.className = 'menu-dish-name';
-      div.style.fontSize = m.fontSize + 'px';
-      div.style.paddingTop = (m.lineHeight * 0.5) + 'px';
-      div.style.paddingBottom = (m.lineHeight * 0.5) + 'px';
-      div.textContent = d.name;
-      dishWrap.appendChild(div);
+    el.innerHTML = `<div class="media-placeholder"><img src="85 Logo.png" alt="85TD"></div>`;
+  }
+  el.appendChild(btn);
+}
+
+function renderDishInfo(dish) {
+  const order = lang === 'zh' ? ['zh','en','ja']
+              : lang === 'en' ? ['en','zh','ja']
+              : ['ja','zh','en'];
+
+  const [p, s, t3] = order;
+  const nameP  = dish.name[p]  || '';
+  const nameS  = dish.name[s]  || '';
+  const nameT3 = dish.name[t3] || '';
+  const descP  = (dish.desc && dish.desc[p])  || '';
+  const descS  = (dish.desc && dish.desc[s])  || '';
+  const descT3 = (dish.desc && dish.desc[t3]) || '';
+
+  const priceHtml = dish.prices
+    ? `<div class="dish-price-multi">
+         ${dish.prices.map(p => `
+           <div class="dish-price">
+             <span class="price-label">${escHtml(p[lang] || p.zh)}</span>
+             <div class="price-inner">
+               <span class="price-nt">NT</span>
+               <span class="price-num">${p.price.toLocaleString()}</span>
+             </div>
+           </div>`).join('')}
+       </div>`
+    : dish.price
+    ? `<div class="dish-price">
+         <span class="price-nt">NT</span>
+         <span class="price-num">${dish.price.toLocaleString()}</span>
+         ${dish.perPerson ? `<span class="price-per">${UI.per[lang]}</span>` : ''}
+       </div>`
+    : '';
+
+  const badgeHtml = (dish.badge || []).map(b => {
+    const labels = { sig: '招牌 Signature', veg: '素食 Vegetarian', spicy: '辣 Spicy' };
+    return `<span class="badge badge-${b}">${labels[b] || b}</span>`;
+  }).join(' ');
+
+  document.getElementById('dish-info').innerHTML = `
+    <div class="dish-names">
+      <div class="name-primary">${escHtml(nameP)}</div>
+      ${nameS  ? `<div class="name-secondary">${escHtml(nameS)}</div>`  : ''}
+      ${nameT3 ? `<div class="name-tertiary">${escHtml(nameT3)}</div>` : ''}
+    </div>
+    ${priceHtml}
+    ${badgeHtml ? `<div class="badges" style="margin-top:4px">${badgeHtml}</div>` : ''}
+    ${(descP || descS || descT3) ? `
+      <div class="dish-divider"></div>
+      ${descP  ? `<div class="dish-desc">${escHtml(descP)}</div>`  : ''}
+      ${descS  ? `<div class="dish-desc" style="opacity:0.7;font-family:'Cormorant Garamond',Georgia,serif;font-style:italic">${escHtml(descS)}</div>`  : ''}
+      ${descT3 ? `<div class="dish-desc" style="opacity:0.55">${escHtml(descT3)}</div>` : ''}
+    ` : ''}
+  `;
+}
+
+// ── Intro / carousel ───────────────────────────────────────
+function showIntro() {
+  selDishId = null;
+  document.getElementById('dish-panel').classList.remove('active');
+  document.getElementById('intro-panel').style.display = '';
+  renderCats();
+  startSlide();
+
+  if (window.innerWidth < 768) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function buildIntro() {
+  const panel = document.getElementById('intro-panel');
+  const slides = MENU.intro || [];
+
+  if (!slides.length) {
+    panel.innerHTML = `
+      <div class="intro-default">
+        <img class="intro-monogram" src="85 Logo.png" alt="85TD">
+        <div class="intro-title-zh">捌伍添第</div>
+        <div class="intro-title-en">85TD · TAIPEI 101 · 85F</div>
+        <div class="intro-gold-line"></div>
+        <div class="intro-copy">
+          「捌」捌味－山、水、海、陸、茶、酒、人、藝<br>
+          「伍」伍道－人文、風土、經典、創新、融合<br>
+          「添」為增加，朝向滿盈，與101節節高昇相呼應<br>
+          「第」為大宅子，應許餐廳高雅禮賓，珍饈佳餚，平添不鰲
+        </div>
+      </div>`;
+    return;
+  }
+
+  slides.forEach((s, i) => {
+    const div = document.createElement('div');
+    div.className = 'slide' + (i === 0 ? ' active' : '');
+    if (s.type === 'youtube') {
+      div.innerHTML = `<iframe src="https://www.youtube.com/embed/${s.id}?autoplay=1&mute=1&loop=1&playlist=${s.id}&controls=0&rel=0&playsinline=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+    } else {
+      div.innerHTML = `<img src="${s.src}" alt="">`;
+    }
+    panel.appendChild(div);
+  });
+
+  if (slides.length > 1) {
+    const dotsEl = document.createElement('div');
+    dotsEl.className = 'slide-dots';
+    slides.forEach((_, i) => {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.onclick = () => goSlide(i);
+      dotsEl.appendChild(d);
     });
+    panel.appendChild(dotsEl);
   }
-  paper.appendChild(dishWrap);
-
-  // Price
-  if (m.price) {
-    const priceBlock = document.createElement('div');
-    priceBlock.className = 'menu-price-block';
-    priceBlock.innerHTML = `
-      <div class="menu-price-num">${m.price}</div>
-      <div class="menu-price-per">每位</div>`;
-    paper.appendChild(priceBlock);
-  }
-  saveToStorage();
-  setTimeout(updatePaperScale, 0);
 }
 
-
-// ======= PRINT =======
-function printMenu() {
-  const orig = document.title;
-  document.title = currentMenu().label;
-
-  const forceA5 = document.createElement('style');
-  forceA5.textContent = '@page{size:A5 portrait!important;margin:0!important;}';
-  document.head.appendChild(forceA5);
-
-  const cleanup = () => {
-    document.title = orig;
-    forceA5.remove();
-    window.removeEventListener('afterprint', cleanup);
-  };
-  window.addEventListener('afterprint', cleanup);
-
-  window.print();
+function startSlide() {
+  const slides = MENU.intro || [];
+  if (slides.length <= 1) return;
+  stopSlide();
+  slideTimer = setInterval(() => goSlide((slideIdx + 1) % slides.length), 8000);
 }
 
-// ======= UTILS =======
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;');
+function stopSlide() {
+  clearInterval(slideTimer);
+  slideTimer = null;
 }
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(t._timer);
-  t._timer = setTimeout(() => t.classList.remove('show'), 2000);
+function goSlide(i) {
+  document.querySelectorAll('.slide').forEach((s, j) => s.classList.toggle('active', j === i));
+  document.querySelectorAll('.dot').forEach((d, j) => d.classList.toggle('active', j === i));
+  slideIdx = i;
 }
 
-document.addEventListener('click', () => {
-  document.querySelectorAll('.dish-dd-panel.open').forEach(p => p.classList.remove('open'));
-  document.querySelectorAll('.dish-dd-btn.open').forEach(b => b.classList.remove('open'));
-});
+// ── Init ───────────────────────────────────────────────────
+window.onload = () => {
+  buildIntro();
+  renderCats();
+  startSlide();
+};
 </script>
 </body>
 </html>
