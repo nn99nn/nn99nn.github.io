@@ -349,7 +349,7 @@ const MENU = {
         },
         {
           id: 'st-10',
-          name: { zh: '糖醋百花油條', en: 'Sweet & Sour Shrimp Paste Stuffed Cruller', ja: 'エビすり身詰めの揚げパン・甘酢ソース' },
+          name: { zh: '糖醋百花油條', en: 'Sweet & Sour Shrimp Paste Stuffed Chinese Crispy Dough', ja: 'エビすり身詰めの揚げパン・甘酢ソース' },
           price: 580,
           desc:  { zh: '過敏源：甲殼類（蝦）、小麥（油條）', en: 'Allergens: Crustacean (Shrimp), Wheat (Cruller)', ja: 'アレルゲン：甲殻類（エビ）・小麦（揚げパン）' },
           image: '', youtube: '', badge: [],
