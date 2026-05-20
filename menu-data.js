@@ -213,7 +213,7 @@ const MENU = {
     // ── 燒味 ──────────────────────────────────────────────
     {
       id: 'bbq',
-      name: { zh: '燒味', en: 'BBQ & Roasted Meats', ja: '焼き物' },
+      name: { zh: '燒味', en: 'BBQ & Roasted Meats', ja: '焼味' },
       dishes: [
         {
           id: 'bbq-01',
@@ -235,7 +235,7 @@ const MENU = {
         },
         {
           id: 'bbq-03',
-          name: { zh: '燒味拼盤', en: 'Assorted BBQ Platter', ja: '焼き物盛り合わせ' },
+          name: { zh: '燒味拼盤', en: 'Assorted BBQ Platter', ja: '焼味盛り合わせ' },
           prices: [
             { zh: '二款', en: '2 Items', ja: '2種', price: 1480 },
             { zh: '三款', en: '3 Items', ja: '3種', price: 1580 },
@@ -684,7 +684,7 @@ const MENU = {
         },
         {
           id: 'rice-03',
-          name: { zh: '乾炒牛河', en: 'Dry-Fried Beef Ho Fun', ja: '乾炒め牛肉河粉' },
+          name: { zh: '乾炒牛河', en: 'Wok-Fried Beef Ho Fun', ja: '乾炒め牛肉河粉' },
           price: null,
           desc:  { zh: '牛肉產地：台灣', en: 'Beef: Taiwan', ja: '牛肉産地：台湾' },
           image: '', youtube: '', badge: [],
@@ -737,7 +737,7 @@ const MENU = {
         },
         {
           id: 'rice-10',
-          name: { zh: '榨菜火鴨絲湯米粉', en: 'Rice Noodle Soup with Preserved Vegetable & Roasted Duck', ja: '搾菜と焼き鴨の米粉スープ' },
+          name: { zh: '榨菜燒鵝絲湯米粉', en: 'Rice Noodle Soup with Preserved Vegetable & Roasted Goose', ja: '搾菜と焼きガチョウの米粉スープ' },
           price: null,
           desc:  { zh: '', en: '', ja: '' },
           image: '', youtube: '', badge: [],
