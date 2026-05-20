@@ -303,6 +303,7 @@ html.fs-6   { font-size: 30px; }
 }
 .badge-sig   { background: rgba(200,164,90,0.2); color: var(--gold); border: 1px solid rgba(200,164,90,0.4); }
 .badge-veg   { background: rgba(80,140,80,0.1);  color: #5a8a5a;    border: 1px solid rgba(80,140,80,0.3); }
+.badge-lacto { background: rgba(80,140,80,0.1);  color: #5a8a5a;    border: 1px solid rgba(80,140,80,0.3); }
 .badge-spicy { background: rgba(180,60,40,0.1);  color: #b43c28;    border: 1px solid rgba(180,60,40,0.3); }
 
 /* Empty category hint */
@@ -538,6 +539,9 @@ html.fs-6   { font-size: 30px; }
   line-height: 1.2;
 }
 
+[data-lang="en"] .name-primary,
+[data-lang="ja"] .name-primary { font-size: 1.594rem; }
+
 .name-secondary {
   font-size: 0.875rem;
   letter-spacing: 2px;
@@ -737,6 +741,7 @@ html.fs-6   { font-size: 30px; }
 <script>
 // ── State ──────────────────────────────────────────────────
 let lang        = 'zh';
+document.documentElement.setAttribute('data-lang', 'zh');
 let selDishId   = null;
 let slideIdx    = 0;
 let slideTimer  = null;
@@ -790,6 +795,7 @@ function stepFont(dir) {
 // ── Language ───────────────────────────────────────────────
 function setLang(l) {
   lang = l;
+  document.documentElement.setAttribute('data-lang', l);
   document.querySelectorAll('.lang-btn').forEach(b =>
     b.classList.toggle('active', b.dataset.lang === l));
   document.querySelector('.back-btn').textContent = UI.back[lang];
@@ -824,8 +830,15 @@ function renderCats() {
       </div>
       <span class="cat-arrow">▼</span>`;
     hd.onclick = () => {
-      openCats.has(cat.id) ? openCats.delete(cat.id) : openCats.add(cat.id);
+      const wasOpen = openCats.has(cat.id);
+      openCats.clear();
+      if (!wasOpen) openCats.add(cat.id);
       renderCats();
+      if (!wasOpen) {
+        const scroll = document.getElementById('cat-scroll');
+        const opened = scroll.querySelector('.cat-hd.open');
+        if (opened) opened.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      }
     };
 
     const rows = document.createElement('div');
@@ -839,7 +852,7 @@ function renderCats() {
         row.className = 'dish-row' + (dish.id === selDishId ? ' sel' : '');
 
         const badgeHtml = (dish.badge || []).map(b => {
-          const labels = { sig: '招牌', veg: '素', spicy: '辣' };
+          const labels = { sig: '招牌', veg: '素食', lacto: '蛋奶素', spicy: '辣' };
           return `<span class="badge badge-${b}">${labels[b] || b}</span>`;
         }).join('');
 
@@ -936,7 +949,7 @@ function renderDishInfo(dish) {
     : '';
 
   const badgeHtml = (dish.badge || []).map(b => {
-    const labels = { sig: '招牌 Signature', veg: '素食 Vegetarian', spicy: '辣 Spicy' };
+    const labels = { sig: '招牌 Signature', veg: '素食 Vegan', lacto: '蛋奶素 Lacto-veg', spicy: '辣 Spicy' };
     return `<span class="badge badge-${b}">${labels[b] || b}</span>`;
   }).join(' ');
 
