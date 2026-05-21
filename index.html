@@ -514,6 +514,10 @@ html.fs-6   { font-size: 30px; }
 
 .back-btn:hover { background: rgba(0,0,0,0.65); }
 
+@media (min-width: 768px) {
+  .back-btn { display: none; }
+}
+
 /* Dish info */
 .dish-info {
   flex: 1;
@@ -914,7 +918,7 @@ function selectDish(dish) {
   document.getElementById('dish-info').scrollTop = 0;
 
   if (window.innerWidth < 768) {
-    document.querySelector('.right').scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => document.querySelector('.right').scrollIntoView({ behavior: 'smooth' }), 0);
   }
 }
 
