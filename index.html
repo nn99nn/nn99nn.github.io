@@ -514,6 +514,31 @@ html.fs-6   { font-size: 30px; }
 
 .back-btn:hover { background: rgba(0,0,0,0.65); }
 
+.dish-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(200,164,90,0.3);
+  color: var(--gold);
+  font-size: 1.5rem;
+  width: 30px;
+  height: 48px;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1;
+  padding: 0;
+  transition: background 0.2s;
+}
+.dish-nav:hover { background: rgba(0,0,0,0.55); }
+.dish-nav-prev { left: 10px; }
+.dish-nav-next { right: 10px; }
+
 @media (min-width: 768px) {
   .back-btn { display: none; }
 }
@@ -740,6 +765,8 @@ html.fs-6   { font-size: 30px; }
     <div id="dish-panel">
       <div class="dish-media" id="dish-media">
         <button class="back-btn" onclick="showIntro()">← 返回</button>
+        <button class="dish-nav dish-nav-prev" id="dish-prev" onclick="navDish(-1)">‹</button>
+        <button class="dish-nav dish-nav-next" id="dish-next" onclick="navDish(+1)">›</button>
       </div>
       <div class="dish-info" id="dish-info"></div>
     </div>
@@ -903,6 +930,22 @@ function renderCats() {
   });
 }
 
+// ── Nav arrows ─────────────────────────────────────────────
+function navDish(dir) {
+  if (!selDishId) return;
+  const { prev, next } = getAdjacentDishes(selDishId);
+  if (dir < 0 && prev) selectDish(prev);
+  if (dir > 0 && next) selectDish(next);
+}
+
+function updateNavArrows() {
+  const { prev, next } = selDishId ? getAdjacentDishes(selDishId) : { prev: null, next: null };
+  const p = document.getElementById('dish-prev');
+  const n = document.getElementById('dish-next');
+  if (p) p.style.visibility = prev ? 'visible' : 'hidden';
+  if (n) n.style.visibility = next ? 'visible' : 'hidden';
+}
+
 // ── Adjacent dish lookup ───────────────────────────────────
 function getAdjacentDishes(id) {
   for (const cat of MENU.categories) {
@@ -929,6 +972,7 @@ function selectDish(dish) {
   renderDishMedia(dish);
   renderDishInfo(dish);
   renderCats();
+  updateNavArrows();
 
   document.getElementById('dish-info').scrollTop = 0;
 
@@ -944,6 +988,8 @@ function setPortrait(on) {
 function renderDishMedia(dish) {
   const el = document.getElementById('dish-media');
   const btn = el.querySelector('.back-btn');
+  const pBtn = document.getElementById('dish-prev');
+  const nBtn = document.getElementById('dish-next');
   setPortrait(false);
 
   if (dish.youtube) {
@@ -963,6 +1009,8 @@ function renderDishMedia(dish) {
     el.innerHTML = `<div class="media-placeholder"><img src="85%20Logo.png" alt="85TD"></div>`;
   }
   el.appendChild(btn);
+  if (pBtn) el.appendChild(pBtn);
+  if (nBtn) el.appendChild(nBtn);
 }
 
 function renderDishInfo(dish) {
@@ -1120,13 +1168,18 @@ window.onload = () => {
   renderCats();
   startSlide();
 
+  document.addEventListener('touchmove', e => {
+    if (!selDishId || window.innerWidth >= 768) return;
+    const info = document.getElementById('dish-info');
+    if (!info.contains(e.target)) e.preventDefault();
+  }, { passive: false });
+
   let swipeX = 0, swipeY = 0;
-  const panel = document.getElementById('dish-panel');
-  panel.addEventListener('touchstart', e => {
+  document.addEventListener('touchstart', e => {
     swipeX = e.touches[0].clientX;
     swipeY = e.touches[0].clientY;
   }, { passive: true });
-  panel.addEventListener('touchend', e => {
+  document.addEventListener('touchend', e => {
     if (!selDishId) return;
     const dx = e.changedTouches[0].clientX - swipeX;
     const dy = e.changedTouches[0].clientY - swipeY;
