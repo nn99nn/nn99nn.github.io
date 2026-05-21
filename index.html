@@ -946,24 +946,27 @@ function updateNavArrows() {
   if (n) n.style.visibility = next ? 'visible' : 'hidden';
 }
 
-// ── Adjacent dish lookup ───────────────────────────────────
+// ── Adjacent dish lookup (cross-category) ─────────────────
 function getAdjacentDishes(id) {
-  for (const cat of MENU.categories) {
-    const idx = cat.dishes.findIndex(d => d.id === id);
-    if (idx !== -1) {
-      return {
-        prev: idx > 0 ? cat.dishes[idx - 1] : null,
-        next: idx < cat.dishes.length - 1 ? cat.dishes[idx + 1] : null,
-      };
-    }
-  }
-  return { prev: null, next: null };
+  const all = MENU.categories.flatMap(cat => cat.dishes);
+  const idx = all.findIndex(d => d.id === id);
+  if (idx === -1) return { prev: null, next: null };
+  return {
+    prev: idx > 0 ? all[idx - 1] : null,
+    next: idx < all.length - 1 ? all[idx + 1] : null,
+  };
+}
+
+function findCatForDish(id) {
+  return MENU.categories.find(cat => cat.dishes.some(d => d.id === id));
 }
 
 // ── Select dish ────────────────────────────────────────────
 function selectDish(dish) {
   const alreadyOpen = document.getElementById('dish-panel').classList.contains('active');
   selDishId = dish.id;
+  const cat = findCatForDish(dish.id);
+  if (cat) { openCats.clear(); openCats.add(cat.id); }
   stopSlide();
 
   document.getElementById('intro-panel').style.display = 'none';
