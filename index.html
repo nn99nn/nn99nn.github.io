@@ -87,7 +87,6 @@ header::after {
   line-height: 1;
 }
 
-/* Language toggle */
 /* Header right controls */
 .header-controls {
   display: flex;
@@ -105,7 +104,7 @@ header::after {
 }
 
 .font-icon {
-  padding: 0 9px;
+  padding: 7px 9px;
   color: var(--mid);
   font-size: 0.875rem;
   line-height: 1;
@@ -114,7 +113,6 @@ header::after {
   display: flex;
   align-items: center;
   height: 100%;
-  padding: 7px 9px;
 }
 
 .font-btn {
@@ -580,14 +578,6 @@ html.fs-6   { font-size: 30px; }
   line-height: 1.4;
 }
 
-.name-tertiary {
-  font-size: 0.75rem;
-  letter-spacing: 1.5px;
-  color: var(--mid);
-  line-height: 1.4;
-  opacity: 0.75;
-}
-
 .dish-price {
   display: flex;
   align-items: baseline;
@@ -611,7 +601,7 @@ html.fs-6   { font-size: 30px; }
 }
 
 .price-per {
-  font-size: 0.69rem;
+  font-size: 0.76rem;
   color: var(--mid);
   letter-spacing: 1.5px;
 }
@@ -634,7 +624,7 @@ html.fs-6   { font-size: 30px; }
   gap: 5px;
 }
 .price-label {
-  font-size: 0.65rem;
+  font-size: 0.72rem;
   color: var(--mid);
   letter-spacing: 1px;
   font-family: 'Noto Sans TC', sans-serif;
@@ -969,7 +959,6 @@ function findCatForDish(id) {
 
 // ── Select dish ────────────────────────────────────────────
 function selectDish(dish) {
-  const alreadyOpen = document.getElementById('dish-panel').classList.contains('active');
   selDishId = dish.id;
   const cat = findCatForDish(dish.id);
   if (cat) { openCats.clear(); openCats.add(cat.id); }
@@ -1121,10 +1110,10 @@ function buildIntro() {
         <div class="intro-title-en">85TD · TAIPEI 101 · 85F</div>
         <div class="intro-gold-line"></div>
         <div class="intro-copy">
-          「捌」捌味－山、水、海、陸、茶、酒、人、藝<br>
-          「伍」伍道－人文、風土、經典、創新、融合<br>
-          「添」為增加，朝向滿盈，與101節節高昇相呼應<br>
-          「第」為大宅子，應許餐廳高雅禮賓，珍饈佳餚，平添不鰲
+          「捌」八境薈萃——山、川、雲、海、茶、酒、詩、情，無界成宴。<br>
+          「伍」五脈並行——天、地、人、時、味，歲月沉積，共聚一席。<br>
+          「添」一菜添一景，一杯添一情，點滴漸成馨，歲月釀共鳴。<br>
+          「第」以府邸之格迎客，以珍饈之道留賓，饗宴無盡。
         </div>
       </div>`;
     return;
