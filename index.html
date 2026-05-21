@@ -716,6 +716,12 @@ html.fs-6   { font-size: 30px; }
   .logo-zh { letter-spacing: 2px; }
   .logo-en { letter-spacing: 1px; }
   .font-icon { display: none; }
+
+  body.dish-open { overflow: hidden; }
+  body.dish-open .app { height: calc(100vh - 60px); overflow: hidden; }
+  body.dish-open .left { display: none; }
+  body.dish-open .right { flex: 1; min-height: unset; overflow: hidden; }
+  body.dish-open #dish-panel { min-height: unset; height: 100%; }
 }
 </style>
 </head>
@@ -979,8 +985,8 @@ function selectDish(dish) {
 
   document.getElementById('dish-info').scrollTop = 0;
 
-  if (window.innerWidth < 768 && !alreadyOpen) {
-    setTimeout(() => document.querySelector('.right').scrollIntoView({ behavior: 'smooth' }), 0);
+  if (window.innerWidth < 768) {
+    document.body.classList.add('dish-open');
   }
 }
 
@@ -1074,6 +1080,7 @@ function renderDishInfo(dish) {
 
 // ── Intro / carousel ───────────────────────────────────────
 function showIntro() {
+  document.body.classList.remove('dish-open');
   const prevId = selDishId;
   selDishId = null;
   document.getElementById('dish-panel').classList.remove('active');
