@@ -513,14 +513,14 @@ const MENU = {
         },
         {
           id: 'sf-04',
-          name: { zh: '老菜脯高樑炆龍蝦', en: 'Braised Lobster Tail with Aged Preserved Radish & Kaoliang Wine', ja: '古漬け大根と金門高粱酒炆ロブスターテール' },
+          name: { zh: '老菜脯高粱炆龍蝦', en: 'Braised Lobster Tail with Aged Preserved Radish & Kaoliang Wine', ja: '古漬け大根と金門高粱酒炆ロブスターテール' },
           price: null,
           desc:  { zh: '過敏源：甲殼類（龍蝦）', en: 'Allergens: Crustacean (Lobster)', ja: 'アレルゲン：甲殻類（ロブスター）' },
           image: '', youtube: '', badge: [],
         },
         {
           id: 'sf-05',
-          name: { zh: '豉椒鮮露筍炒鱈魚球', en: 'Stir-Fried Cod Fillet with Asparagus, Black Bean & Chili', ja: 'アスパラガス・豆豉・唐辛子炒めタラの団子' },
+          name: { zh: '豉椒鮮蘆筍炒鱈魚球', en: 'Stir-Fried Cod Fillet with Asparagus, Black Bean & Chili', ja: 'アスパラガス・豆豉・唐辛子炒めタラの団子' },
           price: null,
           desc:  { zh: '過敏源：魚類（鱈魚）、大豆（豆豉）', en: 'Allergens: Fish (Cod), Soy (Fermented Black Bean)', ja: 'アレルゲン：魚類（タラ）・大豆（豆豉）' },
           image: '', youtube: '', badge: [],
