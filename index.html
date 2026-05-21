@@ -868,6 +868,7 @@ function renderCats() {
       cat.dishes.forEach(dish => {
         const row = document.createElement('div');
         row.className = 'dish-row' + (dish.id === selDishId ? ' sel' : '');
+        row.dataset.dishId = dish.id;
 
         const badgeHtml = (dish.badge || []).map(b => {
           const labels = {
@@ -999,11 +1000,20 @@ function renderDishInfo(dish) {
 
 // ── Intro / carousel ───────────────────────────────────────
 function showIntro() {
+  const prevId = selDishId;
   selDishId = null;
   document.getElementById('dish-panel').classList.remove('active');
   document.getElementById('intro-panel').style.display = '';
   renderCats();
   startSlide();
+
+  if (prevId) {
+    const row = document.querySelector(`[data-dish-id="${prevId}"]`);
+    if (row) {
+      row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      return;
+    }
+  }
 
   if (window.innerWidth < 768) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
