@@ -855,7 +855,11 @@ function renderCats() {
       if (!wasOpen) {
         const scroll = document.getElementById('cat-scroll');
         const opened = scroll.querySelector('.cat-hd.open');
-        if (opened) opened.scrollIntoView({ block: 'start', behavior: 'smooth' });
+        if (opened) {
+          const sr = scroll.getBoundingClientRect();
+          const or = opened.getBoundingClientRect();
+          scroll.scrollTo({ top: scroll.scrollTop + or.top - sr.top, behavior: 'smooth' });
+        }
       }
     };
 
@@ -1010,7 +1014,15 @@ function showIntro() {
   if (prevId) {
     const row = document.querySelector(`[data-dish-id="${prevId}"]`);
     if (row) {
-      setTimeout(() => row.scrollIntoView({ block: 'center', behavior: 'smooth' }), 0);
+      if (window.innerWidth < 768) {
+        setTimeout(() => row.scrollIntoView({ block: 'center', behavior: 'smooth' }), 0);
+      } else {
+        const scroll = document.getElementById('cat-scroll');
+        const sr = scroll.getBoundingClientRect();
+        const rr = row.getBoundingClientRect();
+        const top = scroll.scrollTop + rr.top - sr.top - (scroll.clientHeight - row.offsetHeight) / 2;
+        scroll.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+      }
       return;
     }
   }
