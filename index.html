@@ -1010,7 +1010,7 @@ function showIntro() {
   if (prevId) {
     const row = document.querySelector(`[data-dish-id="${prevId}"]`);
     if (row) {
-      row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      setTimeout(() => row.scrollIntoView({ block: 'center', behavior: 'smooth' }), 0);
       return;
     }
   }
