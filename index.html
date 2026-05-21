@@ -903,8 +903,23 @@ function renderCats() {
   });
 }
 
+// ── Adjacent dish lookup ───────────────────────────────────
+function getAdjacentDishes(id) {
+  for (const cat of MENU.categories) {
+    const idx = cat.dishes.findIndex(d => d.id === id);
+    if (idx !== -1) {
+      return {
+        prev: idx > 0 ? cat.dishes[idx - 1] : null,
+        next: idx < cat.dishes.length - 1 ? cat.dishes[idx + 1] : null,
+      };
+    }
+  }
+  return { prev: null, next: null };
+}
+
 // ── Select dish ────────────────────────────────────────────
 function selectDish(dish) {
+  const alreadyOpen = document.getElementById('dish-panel').classList.contains('active');
   selDishId = dish.id;
   stopSlide();
 
@@ -917,7 +932,7 @@ function selectDish(dish) {
 
   document.getElementById('dish-info').scrollTop = 0;
 
-  if (window.innerWidth < 768) {
+  if (window.innerWidth < 768 && !alreadyOpen) {
     setTimeout(() => document.querySelector('.right').scrollIntoView({ behavior: 'smooth' }), 0);
   }
 }
@@ -1104,6 +1119,23 @@ window.onload = () => {
   buildIntro();
   renderCats();
   startSlide();
+
+  let swipeX = 0, swipeY = 0;
+  const panel = document.getElementById('dish-panel');
+  panel.addEventListener('touchstart', e => {
+    swipeX = e.touches[0].clientX;
+    swipeY = e.touches[0].clientY;
+  }, { passive: true });
+  panel.addEventListener('touchend', e => {
+    if (!selDishId) return;
+    const dx = e.changedTouches[0].clientX - swipeX;
+    const dy = e.changedTouches[0].clientY - swipeY;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      const { prev, next } = getAdjacentDishes(selDishId);
+      if (dx > 0 && prev) selectDish(prev);
+      if (dx < 0 && next) selectDish(next);
+    }
+  }, { passive: true });
 };
 </script>
 </body>
