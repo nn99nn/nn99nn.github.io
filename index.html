@@ -775,6 +775,19 @@ function escHtml(s) {
     .replace(/&/g,'&amp;').replace(/</g,'&lt;')
     .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+function fmtDesc(s) {
+  const bold = [
+    '材料：','過敏源：','豬肉產地：','牛肉產地：','羊肉產地：','豆製品：','可選：',
+    'Ingredients:','Allergens:','Pork:','Beef:','Lamb:','Soy products:','Choice of:',
+    '食材：','アレルゲン：','豚肉産地：','牛肉産地：','ラム産地：','大豆製品：','調理法選択：',
+  ];
+  let out = escHtml(s);
+  bold.forEach(k => {
+    out = out.replace(new RegExp(escHtml(k), 'g'), `<strong style="font-size:calc(1em + 1px)">${escHtml(k)}</strong>`);
+  });
+  out = out.replace(/⚠[^　]*/g, m => `<strong style="font-size:calc(1em + 1px)">${m}</strong>`);
+  return out;
+}
 
 // 把菜名尾端的（...）縮小 30%
 function fmtName(str) {
@@ -854,7 +867,7 @@ function renderCats() {
         const badgeHtml = (dish.badge || []).map(b => {
           const labels = {
             zh: { sig: '招牌', veg: '素食', lacto: '蛋奶素', spicy: '辣' },
-            en: { sig: 'Sig',  veg: 'Vegan', lacto: 'Lacto', spicy: 'Spicy' },
+            en: { sig: 'Sig',  veg: 'Vegan', lacto: 'Lacto-ovo', spicy: 'Spicy' },
             ja: { sig: '看板', veg: 'ヴィーガン', lacto: '乳卵菜食', spicy: '辛' },
           };
           const l = labels[lang] || labels.zh;
@@ -949,14 +962,14 @@ function renderDishInfo(dish) {
     ? `<div class="dish-price">
          <span class="price-nt">NT</span>
          <span class="price-num">${dish.price.toLocaleString()}</span>
-         ${dish.perPerson ? `<span class="price-per">${UI.per[lang]}</span>` : ''}
+         ${dish.perPerson ? `<span class="price-per">${UI.per[lang]}</span>` : dish.unit ? `<span class="price-per">${escHtml(dish.unit[lang] || dish.unit.zh)}</span>` : ''}
        </div>`
     : '';
 
   const badgeHtml = (dish.badge || []).map(b => {
     const labels = {
       zh: { sig: '招牌', veg: '素食', lacto: '蛋奶素', spicy: '辣' },
-      en: { sig: 'Signature', veg: 'Vegan', lacto: 'Lacto-vegetarian', spicy: 'Spicy' },
+      en: { sig: 'Signature', veg: 'Vegan', lacto: 'Lacto-ovo vegetarian', spicy: 'Spicy' },
       ja: { sig: '看板料理', veg: 'ヴィーガン', lacto: '乳卵菜食', spicy: '辛口' },
     };
     const l = labels[lang] || labels.zh;
@@ -972,8 +985,8 @@ function renderDishInfo(dish) {
     ${badgeHtml ? `<div class="badges" style="margin-top:4px">${badgeHtml}</div>` : ''}
     ${(descP || descS) ? `
       <div class="dish-divider"></div>
-      ${descP ? `<div class="dish-desc">${escHtml(descP)}</div>` : ''}
-      ${descS ? `<div class="dish-desc" style="opacity:0.7;font-family:'Cormorant Garamond',Georgia,serif;font-style:italic">${escHtml(descS)}</div>` : ''}
+      ${descP ? `<div class="dish-desc">${fmtDesc(descP)}</div>` : ''}
+      ${descS ? `<div class="dish-desc" style="opacity:0.7;font-family:'Cormorant Garamond',Georgia,serif;font-style:italic">${fmtDesc(descS)}</div>` : ''}
     ` : ''}
     <div class="dish-notice">${escHtml(UI.notice[lang])}</div>
   `;
