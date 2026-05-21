@@ -1010,14 +1010,7 @@ function showIntro() {
   if (prevId) {
     const row = document.querySelector(`[data-dish-id="${prevId}"]`);
     if (row) {
-      setTimeout(() => {
-        if (window.innerWidth < 768) {
-          const top = row.getBoundingClientRect().top + window.pageYOffset - window.innerHeight / 2 + row.offsetHeight / 2;
-          window.scrollTo(0, Math.max(0, top));
-        } else {
-          row.scrollIntoView({ block: 'center', behavior: 'smooth' });
-        }
-      }, 50);
+      setTimeout(() => row.scrollIntoView({ block: 'center', behavior: 'smooth' }), 0);
       return;
     }
   }
