@@ -115,7 +115,12 @@ const MENU = {
     {
       id: 'set',
       name: { zh: '套餐', en: 'Set Menu', ja: 'セットメニュー' },
-      dishes: [],
+      dishes: [
+        { id: 'sm-01', name: { zh: '午市套餐', en: 'Lunch Set Menu',        ja: 'ランチセットメニュー'   }, pdf: '套餐/午間套餐.png', price: null, desc: {}, image: '', youtube: '', badge: [] },
+        { id: 'sm-02', name: { zh: '品味套餐', en: 'Gourmet Set Menu',      ja: 'グルメセットメニュー'   }, pdf: '套餐/品味套餐.png', price: null, desc: {}, image: '', youtube: '', badge: [] },
+        { id: 'sm-03', name: { zh: '主廚套餐', en: "Chef's Set Menu",       ja: 'シェフズセットメニュー' }, pdf: '套餐/主廚套餐.png', price: null, desc: {}, image: '', youtube: '', badge: [] },
+        { id: 'sm-04', name: { zh: '素食套餐', en: 'Vegetarian Set Menu',   ja: 'ベジタリアンセット'     }, pdf: '套餐/素食套餐.png', price: null, desc: {}, image: '', youtube: '', badge: [] },
+      ],
     },
     
     // ── 點心 ──────────────────────────────────────────────
@@ -282,6 +287,13 @@ const MENU = {
           ],
           desc:  { zh: '過敏源：軟體動物（瑤柱）', en: 'Allergens: Mollusc (Dried Scallop/Conpoy)', ja: 'アレルゲン：軟体動物（干し貝柱）' },
           image: '', youtube: '', badge: [],
+        },
+        {
+          id: 'bbq-07',
+          name: { zh: '即烤黑椒和牛叉燒', en: 'Freshly Roasted Black Pepper Wagyu Char Siu', ja: '黒胡椒和牛叉焼き（焼きたて）' },
+          price: 3980,
+          desc:  { zh: '', en: '', ja: '' },
+          image: '', youtube: '', badge: ['sig'],
         },
       ],
     },
@@ -908,7 +920,7 @@ const MENU = {
         {
           id: 'hid-05',
           name: { zh: '即烤黑椒和牛叉燒（一天前預訂）', en: 'Freshly Roasted Japanese Wagyu Char Siu (Pre-order 1 day)', ja: '日本和牛の焼きたてチャーシュー（1日前予約）' },
-          price: null,
+          price: 3980,
           desc:  { zh: '牛肉產地：日本　過敏源：大豆（醬料）', en: 'Beef: Japan　Allergens: Soy (Marinade)', ja: '牛肉産地：日本　アレルゲン：大豆（タレ）' },
           image: '', youtube: '', badge: [],
         },
@@ -923,4 +935,5 @@ const MENU = {
     },
 
   ],
+
 };
