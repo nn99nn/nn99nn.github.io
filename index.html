@@ -1144,7 +1144,7 @@ function renderPdf(url) {
   const container = document.getElementById('pdf-canvas-container');
   container.scrollTop = 0;
   const img = document.createElement('img');
-  img.src = url;
+  img.src = encodeURI(url);
   img.alt = '';
   container.innerHTML = '';
   container.appendChild(img);
