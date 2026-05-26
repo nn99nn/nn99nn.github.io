@@ -288,13 +288,6 @@ const MENU = {
           desc:  { zh: '過敏源：軟體動物（瑤柱）', en: 'Allergens: Mollusc (Dried Scallop/Conpoy)', ja: 'アレルゲン：軟体動物（干し貝柱）' },
           image: '', youtube: '', badge: [],
         },
-        {
-          id: 'bbq-07',
-          name: { zh: '即烤黑椒和牛叉燒', en: 'Freshly Roasted Black Pepper Wagyu Char Siu', ja: '黒胡椒和牛叉焼き（焼きたて）' },
-          price: 3980,
-          desc:  { zh: '', en: '', ja: '' },
-          image: '', youtube: '', badge: ['sig'],
-        },
       ],
     },
 
