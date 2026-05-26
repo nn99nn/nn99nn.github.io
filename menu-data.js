@@ -672,7 +672,7 @@ const MENU = {
         },
         {
           id: 'main-11',
-          name: { zh: '沙嗲溫體牛肉炒菜苗', en: 'Satay Sliced Beef Stir-Fried with Vegetable Shoots', ja: '台湾産温体牛肉のサテー炒め・野菜の芽添え' },
+          name: { zh: '沙嗲牛肉炒菜苗', en: 'Satay Sliced Beef Stir-Fried with Vegetable Shoots', ja: '牛肉のサテー炒め・野菜の芽添え' },
           price: 780,
           desc:  { zh: '牛肉產地：美國安格斯　過敏源：花生（沙嗲醬）', en: 'Beef: US Angus　Allergens: Peanut (Satay Sauce)', ja: '牛肉産地：米国アンガス　アレルゲン：落花生（サテーソース）' },
           image: '', youtube: '', badge: [],
