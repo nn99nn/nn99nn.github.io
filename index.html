@@ -703,7 +703,13 @@ html.fs-6   { font-size: 30px; }
 
   .corner { display: none; }
 
-  header { padding: 0 16px; }
+  header {
+    padding: 0 16px;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 200;
+  }
+  .app { padding-top: 60px; }
   .logo-zh { letter-spacing: 2px; }
   .logo-en { letter-spacing: 1px; }
   .font-icon { display: none; }
