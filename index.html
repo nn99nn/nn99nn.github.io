@@ -709,9 +709,15 @@ html.fs-6   { font-size: 30px; }
   .font-icon { display: none; }
 
   body.dish-open { overflow: hidden; }
-  body.dish-open .app { height: calc(100vh - 60px); overflow: hidden; }
   body.dish-open .left { display: none; }
-  body.dish-open .right { flex: 1; min-height: unset; overflow: hidden; }
+  body.dish-open .right {
+    position: fixed;
+    top: 60px; left: 0; right: 0; bottom: 0;
+    min-height: unset;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
   body.dish-open #dish-panel { min-height: unset; height: 100%; }
 }
 </style>
@@ -977,7 +983,6 @@ function selectDish(dish) {
 
   if (window.innerWidth < 768) {
     document.body.classList.add('dish-open');
-    window.scrollTo(0, 0);
   }
 }
 
