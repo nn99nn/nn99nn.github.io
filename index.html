@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>捌伍添第 85TD</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -544,6 +544,7 @@ html.fs-6   { font-size: 30px; }
 /* Dish info */
 .dish-info {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding: 28px 44px 28px;
   background: var(--cream);
@@ -694,7 +695,7 @@ html.fs-6   { font-size: 30px; }
 
   .dish-media { height: 52vw; min-height: 220px; }
 
-  .dish-info { padding: 20px 24px; }
+  .dish-info { padding: 20px 24px; padding-bottom: max(20px, env(safe-area-inset-bottom)); }
 
   .name-primary { font-size: 1.5rem; }
 
@@ -1113,7 +1114,7 @@ function buildIntro() {
           「捌」八境薈萃——山、川、雲、海、茶、酒、詩、情，無界成宴。<br>
           「伍」五脈並行——天、地、人、時、味，歲月沉積，共聚一席。<br>
           「添」一菜添一景，一杯添一情，點滴漸成馨，歲月釀共鳴。<br>
-          「第」以府邸之格迎客，以珍饈之道留賓，饗宴無盡。
+          「第」以府邸之格迎客，以珍饈之道留賓，饗宴會知音。
         </div>
       </div>`;
     return;
