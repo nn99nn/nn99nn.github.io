@@ -116,10 +116,10 @@ const MENU = {
       id: 'set',
       name: { zh: '套餐', en: 'Set Menu', ja: 'セットメニュー' },
       dishes: [
-        { id: 'sm-01', name: { zh: '午市套餐', en: 'Lunch Set Menu',        ja: 'ランチセットメニュー'   }, pdf: '套餐/午間套餐.png', price: null, desc: {}, image: '', youtube: '', badge: [] },
-        { id: 'sm-02', name: { zh: '品味套餐', en: 'Gourmet Set Menu',      ja: 'グルメセットメニュー'   }, pdf: '套餐/品味套餐.png', price: null, desc: {}, image: '', youtube: '', badge: [] },
-        { id: 'sm-03', name: { zh: '主廚套餐', en: "Chef's Set Menu",       ja: 'シェフズセットメニュー' }, pdf: '套餐/主廚套餐.png', price: null, desc: {}, image: '', youtube: '', badge: [] },
-        { id: 'sm-04', name: { zh: '素食套餐', en: 'Vegetarian Set Menu',   ja: 'ベジタリアンセット'     }, pdf: '套餐/素食套餐.png', price: null, desc: {}, image: '', youtube: '', badge: [] },
+        { id: 'sm-01', name: { zh: '午市套餐', en: 'Lunch Set Menu',        ja: 'ランチセットメニュー'   }, pdf: 'set-menus/lunch-set.png',       price: null, desc: {}, image: '', youtube: '', badge: [] },
+        { id: 'sm-02', name: { zh: '品味套餐', en: 'Gourmet Set Menu',      ja: 'グルメセットメニュー'   }, pdf: 'set-menus/gourmet-set.png',     price: null, desc: {}, image: '', youtube: '', badge: [] },
+        { id: 'sm-03', name: { zh: '主廚套餐', en: "Chef's Set Menu",       ja: 'シェフズセットメニュー' }, pdf: 'set-menus/chef-set.png',        price: null, desc: {}, image: '', youtube: '', badge: [] },
+        { id: 'sm-04', name: { zh: '素食套餐', en: 'Vegetarian Set Menu',   ja: 'ベジタリアンセット'     }, pdf: 'set-menus/vegetarian-set.png',  price: null, desc: {}, image: '', youtube: '', badge: [] },
       ],
     },
     
