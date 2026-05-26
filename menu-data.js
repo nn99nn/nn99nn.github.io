@@ -734,6 +734,13 @@ const MENU = {
           desc:  { zh: '可選：蒜蓉 / 清炒 / 上湯　⚠ 如需五辛素請告知服務同仁', en: 'Choice of: Minced Garlic / Plain Stir-Fried / Superior Broth　⚠ For pungent-free Buddhist diet, please inform our staff', ja: '調理法選択：にんにく炒め / 清炒め / 上湯仕立て　⚠ 五葷を避けたい方はスタッフまでお申し付けください' },
           image: '', youtube: '', badge: ['veg'],
         },
+        {
+          id: 'veg-07',
+          name: { zh: '松露野菌燒豆腐', en: 'Braised Tofu with Truffle & Wild Mushrooms', ja: 'トリュフと野生きのこの豆腐煮込み' },
+          price: 580,
+          desc:  { zh: '過敏源：大豆（豆腐）', en: 'Allergens: Soy (Tofu)', ja: 'アレルゲン：大豆（豆腐）' },
+          image: '', youtube: '', badge: ['veg'],
+        },
       ],
     },
 
