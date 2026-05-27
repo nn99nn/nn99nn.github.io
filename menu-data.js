@@ -525,7 +525,7 @@ const MENU = {
         },
         {
           id: 'sf-04',
-          name: { zh: '老菜脯高粱焗龍蝦', en: 'Braised Lobster Tail with Aged Preserved Radish & Kaoliang Wine', ja: '古漬け大根と金門高粱酒炆ロブスターテール' },
+          name: { zh: '原湯年糕焗龍蝦', en: 'Baked Lobster with Rice Cake in Lobster Broth', ja: 'ロブスター出汁と年糕炆ロブスター' },
           price: null,
           desc:  { zh: '過敏源：甲殼類（龍蝦）', en: 'Allergens: Crustacean (Lobster)', ja: 'アレルゲン：甲殻類（ロブスター）' },
           image: '', youtube: '', badge: [],
@@ -803,7 +803,7 @@ const MENU = {
         {
           id: 'rice-08',
           name: { zh: '松露蛋白炒飯', en: 'Fried Rice with Truffle & Egg White', ja: 'トリュフと卵白の炒飯' },
-          price: 680,
+          price: 580,
           desc:  { zh: '過敏源：蛋', en: 'Allergens: Egg', ja: 'アレルゲン：卵' },
           image: '', youtube: '', badge: ['lacto'],
         },
@@ -900,7 +900,7 @@ const MENU = {
           id: 'hid-03',
           name: { zh: '鮑汁大鴨藏珍寶（一天前預訂）', en: 'Whole Duck Concealing Precious Treasures in Abalone Sauce (Pre-order 1 day)', ja: '鮑ソース丸鴨の珍宝隠し（1日前予約）' },
           price: 9880, unit: { zh: '一隻（10位用）', en: 'Whole (serves 10)', ja: '1羽（10名様用）' },
-          desc:  { zh: '材料：陳草菇・鮑魚・花膠・花菇・黃玉參　過敏源：軟體動物（鮑魚）', en: 'Ingredients: Aged Straw Mushroom · Abalone · Fish Maw · Flower Mushroom · Sea Cucumber　Allergens: Mollusc (Abalone)', ja: '食材：陳年草きのこ・鮑魚・花膠・花しいたけ・なまこ　アレルゲン：軟体動物（アワビ）' },
+          desc:  { zh: '材料：鮑魚・花膠・黃玉參・天白菇・陳草菇　過敏源：軟體動物（鮑魚）', en: 'Ingredients: Abalone · Fish Maw · Sea CucumberAged · Flower Mushroom · Straw Mushroom  　Allergens: Mollusc (Abalone)', ja: '食材：鮑魚・花膠・なまこ・花しいたけ・陳年草きのこ　アレルゲン：軟体動物（アワビ）' },
           image: '', youtube: '', badge: [],
         },
         {
@@ -921,7 +921,7 @@ const MENU = {
           id: 'hid-06',
           name: { zh: '脆皮牛腩（一天前預訂）', en: 'Crispy Beef Brisket (Pre-order 1 day)', ja: 'クリスピー牛バラ肉（1日前予約）' },
           price: 1280,
-          desc:  { zh: '過敏源：小麥（炸粉）', en: 'Allergens: Wheat (Batter)', ja: 'アレルゲン：小麦（衣）' },
+          desc:  { zh: '牛肉產地：台灣　過敏源：小麥（炸粉）', en: 'Beef: Taiwan　Allergens: Wheat (Batter)', ja: '牛肉産地：台湾　アレルゲン：小麦（衣）' },
           image: '', youtube: '', badge: [],
         },
       ],
