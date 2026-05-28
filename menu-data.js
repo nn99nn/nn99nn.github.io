@@ -389,13 +389,6 @@ const MENU = {
       name: { zh: '湯羹', en: 'Soups', ja: 'スープ' },
       dishes: [
         {
-          id: 'soup-01',
-          name: { zh: '金湯花膠燴燕窩', en: 'Fish Maw & Bird\'s Nest in Saffron Golden Broth', ja: 'サフラン黄金スープ・花膠と燕の巣の煮込み' },
-          price: 780, perPerson: true,
-          desc:  { zh: '豬肉產地：台灣　⚠ 含藏紅花，孕婦不宜　過敏源：魚類（花膠）', en: 'Pork: Taiwan　⚠ Contains saffron. Not recommended for pregnant women.　Allergens: Fish (Fish Maw)', ja: '豚肉産地：台湾　⚠ サフラン使用。妊娠中の方はご遠慮ください。　アレルゲン：魚類（花膠）' },
-          image: '', youtube: '', badge: ['sig'],
-        },
-        {
           id: 'soup-02',
           name: { zh: '瑤柱花膠鴨絲羹', en: 'Conpoy, Fish Maw & Shredded Duck Thick Soup', ja: '干し貝柱・花膠・鴨肉のとろみスープ' },
           price: 420, perPerson: true,
@@ -447,6 +440,49 @@ const MENU = {
       ],
     },
 
+    // ── 燕窩類 ────────────────────────────────────────────
+    {
+      id: 'birdsnest',
+      name: { zh: '燕窩', en: "Bird's Nest", ja: '燕の巣' },
+      dishes: [
+        {
+          id: 'soup-01',
+          name: { zh: '金湯花膠燴燕窩', en: 'Fish Maw & Bird\'s Nest in Saffron Golden Broth', ja: 'サフラン黄金スープ・花膠と燕の巣の煮込み' },
+          price: 780, perPerson: true,
+          desc:  { zh: '豬肉產地：台灣　⚠ 含藏紅花，孕婦不宜　過敏源：魚類（花膠）', en: 'Pork: Taiwan　⚠ Contains saffron. Not recommended for pregnant women.　Allergens: Fish (Fish Maw)', ja: '豚肉産地：台湾　⚠ サフラン使用。妊娠中の方はご遠慮ください。　アレルゲン：魚類（花膠）' },
+          image: '', youtube: '', badge: ['sig'],
+        },
+        {
+          id: 'sd-04',
+          name: { zh: '紅燒官燕', en: 'Braised Bird\'s Nest with Superior Broth', ja: '官燕の醤油風味中華ブイヨンスープ' },
+          price: 1880, perPerson: true,
+          desc:  { zh: '', en: '', ja: '' },
+          image: '', youtube: '', badge: [],
+        },
+        {
+          id: 'sd-05',
+          name: { zh: '蟹皇燴官燕', en: 'Braised Bird\'s Nest Soup with Crab Meat and Crab Cream', ja: '蟹みそと官燕のあんかけスープ' },
+          price: 2180, perPerson: true,
+          desc:  { zh: '過敏源：甲殼類（蟹）', en: 'Allergens: Crustacean (Crab)', ja: 'アレルゲン：甲殻類（カニ）' },
+          image: '', youtube: '', badge: [],
+        },
+        {
+          id: 'bn-01',
+          name: { zh: '雞茸燕窩羹', en: "Minced Chicken & Bird's Nest Thick Soup", ja: '鶏ひき肉と燕の巣のとろみスープ' },
+          price: 580, perPerson: true,
+          desc:  { zh: '', en: '', ja: '' },
+          image: '', youtube: '', badge: [],
+        },
+        {
+          id: 'bn-02',
+          name: { zh: '金湯蟹肉燕窩羹', en: "Crab Meat & Bird's Nest Thick Soup in Saffron Golden Broth", ja: 'サフラン黄金スープ・カニ肉と燕の巣のとろみスープ' },
+          price: 680, perPerson: true,
+          desc:  { zh: '過敏源：甲殼類（蟹）', en: 'Allergens: Crustacean (Crab)', ja: 'アレルゲン：甲殻類（カニ）' },
+          image: '', youtube: '', badge: [],
+        },
+      ],
+    },
+
     // ── 海味 ──────────────────────────────────────────────
     {
       id: 'seadelicacy',
@@ -454,7 +490,7 @@ const MENU = {
       dishes: [
         {
           id: 'sd-01',
-          name: { zh: '蠔皇乾鮑魚 (18 頭)', en: 'Braised Dried Abalone (18 Heads)', ja: '干鮑の柔らかオイスターソース煮込み（18 頭）' },
+          name: { zh: '蠔皇乾鮑魚 (20 頭)', en: 'Braised Dried Abalone (20 Heads)', ja: '干鮑の柔らかオイスターソース煮込み（20 頭）' },
           price: 3680, perPerson: true,
           desc:  { zh: '過敏源：軟體動物（鮑魚）', en: 'Allergens: Mollusc (Abalone)', ja: 'アレルゲン：軟体動物（アワビ）' },
           image: '', youtube: '', badge: ['sig'],
@@ -479,20 +515,6 @@ const MENU = {
           price: 1680, perPerson: true,
           desc:  { zh: '過敏源：軟體動物（海參）、魚類（烏魚子）', en: 'Allergens: Mollusc (Sea Cucumber), Fish (Mullet Roe)', ja: 'アレルゲン：軟体動物（なまこ）・魚類（カラスミ）' },
           image: '', youtube: '', badge: ['sig'],
-        },
-        {
-          id: 'sd-04',
-          name: { zh: '紅燒官燕', en: 'Braised Bird\'s Nest with Superior Broth', ja: '官燕の醤油風味中華ブイヨンスープ' },
-          price: 1880, perPerson: true,
-          desc:  { zh: '', en: '', ja: '' },
-          image: '', youtube: '', badge: [],
-        },
-        {
-          id: 'sd-05',
-          name: { zh: '蟹皇燴官燕', en: 'Braised Bird\'s Nest Soup with Crab Meat and Crab Cream', ja: '蟹みそと官燕のあんかけスープ' },
-          price: 2180, perPerson: true,
-          desc:  { zh: '過敏源：甲殼類（蟹）', en: 'Allergens: Crustacean (Crab)', ja: 'アレルゲン：甲殻類（カニ）' },
-          image: '', youtube: '', badge: [],
         },
       ],
     },
@@ -585,6 +607,13 @@ const MENU = {
           price: 880,
           desc:  { zh: '過敏源：魚類（青衣）', en: 'Allergens: Fish (Wrasse)', ja: 'アレルゲン：魚類（ブダイ）' },
           image: '', youtube: '', badge: [],
+        },
+        {
+          id: 'sf-13',
+          name: { zh: '麻婆蝦腰豆腐煲', en: 'Mapo Tofu Casserole with Shrimp', ja: '海老入り麻婆豆腐土鍋' },
+          price: 580,
+          desc:  { zh: '豆製品：非基因改造　過敏源：甲殼類（蝦）、大豆（豆腐）', en: 'Soy products: non-GMO　Allergens: Crustacean (Shrimp), Soy (Tofu)', ja: '大豆製品：非遺伝子組み換え　アレルゲン：甲殻類（エビ）・大豆（豆腐）' },
+          image: '', youtube: '', badge: ['spicy'],
         },
       ],
     },
@@ -724,13 +753,6 @@ const MENU = {
           price: 480,
           desc:  { zh: '⚠ 如需五辛素請告知服務同仁', en: '⚠ For pungent-free Buddhist diet, please inform our staff', ja: '⚠ 五葷を避けたい方はスタッフまでお申し付けください' },
           image: '', youtube: '', badge: ['veg'],
-        },
-        {
-          id: 'veg-05',
-          name: { zh: '麻婆蝦腰豆腐煲', en: 'Mapo Tofu Casserole with Shrimp', ja: '海老入り麻婆豆腐土鍋' },
-          price: 580,
-          desc:  { zh: '豆製品：非基因改造　過敏源：甲殼類（蝦）、大豆（豆腐）', en: 'Soy products: non-GMO　Allergens: Crustacean (Shrimp), Soy (Tofu)', ja: '大豆製品：非遺伝子組み換え　アレルゲン：甲殻類（エビ）・大豆（豆腐）' },
-          image: '', youtube: '', badge: ['spicy'],
         },
         {
           id: 'veg-06',
