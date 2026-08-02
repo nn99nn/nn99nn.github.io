@@ -1,4 +1,21 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Huninn&family=Jost:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&family=Red+Rose:wght@400;600&family=Hedvig+Letters+Serif&display=swap');
+
+/* 源流明體 GenRyuMin — self-hosted, subset to this site's actual character set.
+   Free/OFL (github.com/ButTaiwan/genryu-font); see fonts/OFL-LICENSE.txt */
+@font-face{
+  font-family: 'GenRyuMin';
+  src: url('../fonts/GenRyuMin-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face{
+  font-family: 'GenRyuMin';
+  src: url('../fonts/GenRyuMin-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root{
   --olive: #6f7b52;
@@ -18,15 +35,17 @@ body{
   margin:0;
   background: var(--cream);
   color: var(--ink);
-  font-family: 'Jost', 'Huninn', sans-serif;
+  font-family: 'Jost', 'GenRyuMin', sans-serif;
   font-weight: 300;
   line-height: 1.8;
   -webkit-font-smoothing: antialiased;
 }
 
+/* h1 English display type stands in for TXC Pearl (not yet licensed) —
+   swap the family here once a webfont/CDN embed for it is available. */
 h1,h2,h3,.serif{
-  font-family: 'Cormorant Garamond', 'Huninn', serif;
-  font-weight: 500;
+  font-family: 'Cormorant Garamond', 'GenRyuMin', serif;
+  font-weight: 600;
   letter-spacing: 0.02em;
   color: var(--ink);
 }
@@ -190,6 +209,12 @@ section.tight{ padding: 64px 0; }
 .card-body h3{ margin: 0 0 10px; }
 .card-body p{ color: #5a5346; font-size: 0.95rem; }
 
+/* Dish name (English) + price — scoped to menu-style card grids via .dishes */
+.dishes .card-body .eyebrow{ font-family: 'Hedvig Letters Serif', serif; font-size: 0.95rem; letter-spacing: 0.02em; text-transform: none; }
+
+/* Beverage/wine list category labels — staged for the upcoming drinks section */
+.beverage-category{ font-family: 'Red Rose', cursive; font-weight: 600; letter-spacing: 0.04em; }
+
 /* Info strip */
 .info-strip{
   display:grid; grid-template-columns: repeat(3,1fr); gap: 40px;
@@ -215,6 +240,7 @@ section.tight{ padding: 64px 0; }
 .menu-note{
   margin-top: 12px; font-size: 0.85rem; color:#7a7261;
 }
+.card-body .menu-note{ font-family: 'Hedvig Letters Serif', serif; font-size: 1rem; color: var(--olive-dark); }
 
 /* Table for hours/info */
 .info-table{ width:100%; border-collapse: collapse; }
