@@ -306,4 +306,11 @@ footer a:hover{ color: var(--olive-light); }
   .footer-grid{ grid-template-columns: 1fr; gap: 28px; }
   section{ padding: 64px 0; }
   .menu-item{ flex-direction: column; gap: 4px; }
+
+  .hero{ height: 62vh; min-height: 460px; }
+  .hero img{ object-position: 78% center; }
+
+  /* backdrop-filter on .site-header creates a containing block that traps
+     .nav's position:fixed, breaking full-screen coverage — disable it here */
+  .site-header{ backdrop-filter: none; }
 }
