@@ -18,9 +18,9 @@
 }
 
 :root{
-  --olive: #6f7b52;
-  --olive-dark: #4c5539;
-  --olive-light: #a6ad8c;
+  --olive: #708573; /* Pantone 5625 C */
+  --olive-dark: #4e5d51;
+  --olive-light: #a2b0a4;
   --cream: #f6f2e9;
   --ivory: #fbf9f3;
   --ink: #2a2620;
