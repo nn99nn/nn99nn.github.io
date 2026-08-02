@@ -21,7 +21,6 @@
   --olive: #708573; /* Pantone 5625 C */
   --olive-dark: #4e5d51;
   --olive-light: #a2b0a4;
-  --accent: #b5654a; /* 赤陶磚紅 */
   --cream: #f6f2e9;
   --ivory: #fbf9f3;
   --ink: #2a2620;
@@ -66,7 +65,7 @@ img{ max-width: 100%; display:block; }
   letter-spacing: 0.3em;
   text-transform: uppercase;
   font-size: 0.72rem;
-  color: var(--accent);
+  color: var(--olive-dark);
 }
 
 /* Header */
@@ -85,7 +84,7 @@ img{ max-width: 100%; display:block; }
   font-size: 1.6rem;
   letter-spacing: 0.05em;
 }
-.logo span{ color: var(--accent); font-style: italic; }
+.logo span{ color: var(--olive); font-style: italic; }
 
 .nav{ display:flex; align-items:center; gap: 34px; }
 .nav a{
@@ -96,7 +95,7 @@ img{ max-width: 100%; display:block; }
 }
 .nav a::after{
   content:''; position:absolute; left:0; bottom:0; height:1px; width:0;
-  background: var(--accent); transition: width .25s ease;
+  background: var(--olive); transition: width .25s ease;
 }
 .nav a:hover::after, .nav a.active::after{ width:100%; }
 .nav a.active{ color: var(--olive-dark); }
