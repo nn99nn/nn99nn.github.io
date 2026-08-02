@@ -182,6 +182,7 @@ section.tight{ padding: 64px 0; }
   border: 1px solid var(--line);
 }
 .card img{ aspect-ratio: 4/3; object-fit: cover; width:100%; }
+.card img.chef-photo{ aspect-ratio: 3/4; object-position: center 10%; }
 .card-body{ padding: 26px 28px 30px; }
 .card-body .eyebrow{ margin-bottom: 8px; display:block; }
 .card-body h3{ margin: 0 0 10px; }
