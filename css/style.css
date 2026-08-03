@@ -4,14 +4,14 @@
    Free/OFL (github.com/ButTaiwan/genryu-font); see fonts/OFL-LICENSE.txt */
 @font-face{
   font-family: 'GenRyuMin';
-  src: url('../fonts/GenRyuMin-Regular.woff2') format('woff2');
+  src: url('../fonts/GenRyuMin-Regular.woff2?v=2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face{
   font-family: 'GenRyuMin';
-  src: url('../fonts/GenRyuMin-SemiBold.woff2') format('woff2');
+  src: url('../fonts/GenRyuMin-SemiBold.woff2?v=2') format('woff2');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -214,6 +214,38 @@ section.tight{ padding: 64px 0; }
 
 /* Beverage/wine list category labels — staged for the upcoming drinks section */
 .beverage-category{ font-family: 'Red Rose', cursive; font-weight: 600; letter-spacing: 0.04em; }
+
+/* Press list (news.html) */
+.press-list{ display:grid; grid-template-columns: 1fr; gap: 32px; }
+@media (min-width: 640px){ .press-list{ grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px){ .press-list{ grid-template-columns: repeat(3, 1fr); } }
+
+.press-card{
+  display:block;
+  background: var(--ivory);
+  border: 1px solid var(--line);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.press-card:hover{ transform: translateY(-4px); box-shadow: 0 10px 26px rgba(42,38,32,0.12); }
+.press-card img{ width:100%; aspect-ratio: 3/2; object-fit: cover; display:block; }
+.press-card-body{ padding: 22px 24px 26px; }
+.press-card-body .eyebrow{ margin-bottom: 8px; display:block; }
+.press-card-body time{
+  display:block; margin-bottom: 10px;
+  font-family: 'Jost', sans-serif; font-size: 0.78rem; letter-spacing: 0.04em;
+  color: #7a7261;
+}
+.press-card-body h3{
+  margin: 0 0 14px; font-size: 1.1rem; line-height: 1.4;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.press-card-link{
+  font-family: 'Jost', sans-serif; font-size: 0.82rem; letter-spacing: 0.04em;
+  color: var(--olive-dark); text-decoration: underline;
+}
+@media (prefers-reduced-motion: reduce){
+  .press-card:hover{ transform: none; }
+}
 
 /* Info strip */
 .info-strip{
