@@ -236,7 +236,7 @@ section.tight{ padding: 64px 0; }
   color: #7a7261;
 }
 .press-card-body h3{
-  margin: 0 0 14px; font-size: 1.1rem; line-height: 1.4;
+  margin: 0 0 14px; font-size: 1.1rem; line-height: 1.4; font-weight: 400;
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
 }
 .press-card-link{
