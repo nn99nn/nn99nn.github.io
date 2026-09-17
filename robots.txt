@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://chaud-doux.com/sitemap.xml
